@@ -1,0 +1,195 @@
+.film-container {
+    grid-area: page-content;
+    color: var(--light-color);
+
+    /* Grayscale background */
+    position: relative;
+    &::before {
+        background-image: linear-gradient(
+                rgba(10, 10, 10, 0.75),
+                rgba(10, 10, 10, 0.75)
+            ),
+            var(--background-image-url);
+        filter: grayscale(100%);
+
+        content: '';
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        z-index: -1;
+        top: 0;
+        left: 0;
+    }
+
+    padding: 7.5rem 15rem;
+}
+
+.film-container-content {
+    display: grid;
+    height: 100%;
+
+    grid-auto-flow: column;
+    grid-template-columns: 2fr 1fr;
+    grid-template-rows: minmax(0, 1fr) auto;
+    grid-template-areas:
+        'details       poster'
+        'notable-staff notable-staff';
+
+    gap: 10rem;
+}
+
+.film-details {
+    grid-area: details;
+
+    & .film-metadata {
+        display: flex;
+        align-items: center;
+
+        font-weight: bold;
+        font-size: 2rem;
+
+        & > * {
+            display: flex;
+            align-items: center;
+
+            padding-inline: 2rem;
+            &:first-child {
+                padding-inline-start: 0;
+            }
+            &:last-child {
+                padding-inline-end: 0;
+            }
+
+            &:not(:last-child) {
+                border-right: 2px solid var(--light-color);
+            }
+        }
+
+        & .film-imdb-rating {
+            display: flex;
+            gap: 1rem;
+
+            & img {
+                height: 1.5em;
+            }
+        }
+    }
+
+    & .film-title {
+        font-size: 7rem;
+
+        &::after {
+            content: '.';
+            color: var(--branding-color);
+        }
+    }
+
+    & .film-description {
+        font-family: var(--sans-serif-font);
+        font-size: 2rem;
+        line-height: 1.5;
+        max-width: 80ch;
+    }
+
+    & .film-action-buttons {
+        margin-top: 7rem;
+        display: flex;
+        gap: 2rem;
+    }
+}
+
+.film-poster-container {
+    grid-area: poster;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+
+    & .film-poster {
+        border: 4px solid rgba(255, 255, 255, 0.7);
+        object-fit: contain;
+        height: 100%;
+    }
+}
+
+.film-notable-staff-container {
+    grid-area: notable-staff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    & .film-notable-staff-item {
+        display: flex;
+        align-items: center;
+        flex-wrap: nowrap;
+        gap: 2rem;
+
+        & .film-notable-staff-image {
+            height: 64px;
+            border-radius: 50%;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+        }
+
+        & .film-notable-staff-title {
+            color: var(--branding-color);
+            font-family: var(--sans-serif-font);
+            font-size: 1.6rem;
+        }
+
+        & .film-notable-staff-description {
+            color: var(--light-color);
+            font-weight: bold;
+        }
+    }
+
+    & .film-notable-staff-separator:not(:last-child) {
+        height: 100%;
+        border-right: 2px solid var(--light-color);
+    }
+}
+
+.responsive-trailer-modal {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    & .responsive-trailer-wrapper {
+        position: relative;
+
+        --assumed-height: 60vh;
+        height: var(--assumed-height);
+        --assumed-aspect-ratio: 16 / 9;
+        aspect-ratio: var(--assumed-aspect-ratio);
+        --numerical-ratio: calc(var(--assumed-aspect-ratio));
+        width: calc(var(--assumed-height) * var(--numerical-ratio));
+
+        & .responsive-trailer-loading-overlay {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            color: var(--light-color);
+            font-size: 3rem;
+            font-weight: bold;
+
+            & .responsive-trailer-loading-spinner {
+                --spinner-size: 9rem;
+                width: var(--spinner-size) !important;
+                height: var(--spinner-size) !important;
+                color: var(--light-color);
+            }
+        }
+
+        & .responsive-trailer-player {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100% !important;
+            height: 100% !important;
+        }
+    }
+}

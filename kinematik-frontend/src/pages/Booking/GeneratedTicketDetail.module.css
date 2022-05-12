@@ -1,0 +1,15 @@
+.generated-ticket-detail {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding-block: 1rem;
+
+    &-title {
+        filter: brightness(80%);
+    }
+
+    &-description {
+        font-weight: bold;
+    }
+}
