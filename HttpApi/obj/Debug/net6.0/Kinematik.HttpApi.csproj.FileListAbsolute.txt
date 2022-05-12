@@ -1,0 +1,12 @@
+D:\kinematik\HttpApi\bin\Debug\net6.0\Kinematik.HttpApi.deps.json
+D:\kinematik\HttpApi\bin\Debug\net6.0\Kinematik.HttpApi.dll
+D:\kinematik\HttpApi\bin\Debug\net6.0\Kinematik.HttpApi.pdb
+D:\kinematik\HttpApi\obj\Debug\net6.0\Kinematik.HttpApi.csproj.AssemblyReference.cache
+D:\kinematik\HttpApi\obj\Debug\net6.0\Kinematik.HttpApi.GeneratedMSBuildEditorConfig.editorconfig
+D:\kinematik\HttpApi\obj\Debug\net6.0\Kinematik.HttpApi.AssemblyInfoInputs.cache
+D:\kinematik\HttpApi\obj\Debug\net6.0\Kinematik.HttpApi.AssemblyInfo.cs
+D:\kinematik\HttpApi\obj\Debug\net6.0\Kinematik.HttpApi.csproj.CoreCompileInputs.cache
+D:\kinematik\HttpApi\obj\Debug\net6.0\Kinematik.HttpApi.dll
+D:\kinematik\HttpApi\obj\Debug\net6.0\refint\Kinematik.HttpApi.dll
+D:\kinematik\HttpApi\obj\Debug\net6.0\Kinematik.HttpApi.pdb
+D:\kinematik\HttpApi\obj\Debug\net6.0\ref\Kinematik.HttpApi.dll
