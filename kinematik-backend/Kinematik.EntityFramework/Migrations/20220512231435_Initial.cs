@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace Kinematik_EntityFramework.Migrations
+namespace Kinematik.EntityFramework.Migrations
 {
     public partial class Initial : Migration
     {

@@ -33,9 +33,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Kinematik-Application\Kinematik-Application.csproj" />
-    <ProjectReference Include="..\Kinematik-EntityFramework\Kinematik-EntityFramework.csproj" />
-    <ProjectReference Include="..\Kinematik-HttpApi\Kinematik-HttpApi.csproj" />
+    <ProjectReference Include="..\Kinematik.Application\Kinematik.Application.csproj" />
+    <ProjectReference Include="..\Kinematik.EntityFramework\Kinematik.EntityFramework.csproj" />
+    <ProjectReference Include="..\Kinematik.HttpApi\Kinematik.HttpApi.csproj" />
   </ItemGroup>
 
 </Project>

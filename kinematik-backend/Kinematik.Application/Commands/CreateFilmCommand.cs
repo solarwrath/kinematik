@@ -1,8 +1,9 @@
-﻿using Kinematik_Domain;
-using Kinematik_EntityFramework;
+﻿using Kinematik.Domain.Entities;
+using Kinematik.EntityFramework;
+
 using MediatR;
 
-namespace Kinematik_Application.Commands
+namespace Kinematik.Application.Commands
 {
     public class CreateFilmCommandRequest : IRequest<Film>
     {
@@ -15,7 +16,7 @@ namespace Kinematik_Application.Commands
 
         public CreateFilmCommandHandler(KinematikDbContext dbContext)
         {
-            this._dbContext = dbContext;
+            _dbContext = dbContext;
         }
         
         public async Task<Film> Handle(CreateFilmCommandRequest request, CancellationToken cancellationToken)
@@ -24,8 +25,8 @@ namespace Kinematik_Application.Commands
             {
                 Title = "Vladislavius Finyk"
             };
-            await this._dbContext.AddAsync(createdFilm, cancellationToken);
-            await this._dbContext.SaveChangesAsync(cancellationToken);
+            await _dbContext.AddAsync(createdFilm, cancellationToken);
+            await _dbContext.SaveChangesAsync(cancellationToken);
 
             return createdFilm;
         }

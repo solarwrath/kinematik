@@ -1,8 +1,9 @@
 ﻿using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
+
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace Kinematik_Hosting.Swagger
+namespace Kinematik.Hosting.Swagger
 {
     // Outputs enum as "{enum value} = {enum string}"
     public class EnumSchemaFilter : ISchemaFilter

@@ -11,8 +11,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Kinematik-Domain\Kinematik-Domain.csproj" />
-    <ProjectReference Include="..\Kinematik-EntityFramework\Kinematik-EntityFramework.csproj" />
+    <ProjectReference Include="..\Kinematik.Domain\Kinematik.Domain.csproj" />
+    <ProjectReference Include="..\Kinematik.EntityFramework\Kinematik.EntityFramework.csproj" />
   </ItemGroup>
 
 </Project>

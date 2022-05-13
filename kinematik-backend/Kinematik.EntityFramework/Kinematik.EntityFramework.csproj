@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Kinematik-Domain\Kinematik-Domain.csproj" />
+    <ProjectReference Include="..\Kinematik.Domain\Kinematik.Domain.csproj" />
   </ItemGroup>
 
 </Project>

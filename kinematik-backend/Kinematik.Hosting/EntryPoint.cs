@@ -1,8 +1,8 @@
 using System.Reflection;
 
-using Kinematik_EntityFramework;
+using Kinematik.EntityFramework;
 
-using Kinematik_Hosting.Swagger;
+using Kinematik.Hosting.Swagger;
 
 using MediatR;
 
@@ -12,8 +12,8 @@ using Microsoft.OpenApi.Models;
 
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-Assembly httpApiAssembly = Assembly.Load("Kinematik-HttpApi");
-Assembly applicationAssembly = Assembly.Load("Kinematik-Application");
+Assembly httpApiAssembly = Assembly.Load("Kinematik.HttpApi");
+Assembly applicationAssembly = Assembly.Load("Kinematik.Application");
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -73,7 +73,7 @@ void ConfigureServices(IServiceCollection services, ConfigurationManager configu
         configuration.SwaggerDoc("v1", new OpenApiInfo
         {
             Version = "v1",
-            Description = "API для взаємодії з сервісом Kinematik"
+            Description = "API РґР»СЏ РІР·Р°С”РјРѕРґС–С— Р· СЃРµСЂРІС–СЃРѕРј Kinematik"
         });
 
         configuration.EnableAnnotations();

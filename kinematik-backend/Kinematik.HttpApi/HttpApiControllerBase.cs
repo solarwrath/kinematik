@@ -1,7 +1,6 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
-namespace Kinematik_HttpApi
+namespace Kinematik.HttpApi
 {
     [ApiController]
     [Route("api/[controller]")]

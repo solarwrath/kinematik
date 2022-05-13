@@ -1,12 +1,11 @@
-﻿using Kinematik_Domain;
-
-using Kinematik_EntityFramework;
+﻿using Kinematik.Domain.Entities;
+using Kinematik.EntityFramework;
 
 using MediatR;
 
 using Microsoft.EntityFrameworkCore;
 
-namespace Kinematik_Application.Queries
+namespace Kinematik.Application.Queries
 {
     public class GetFilmsQueryRequest : IRequest<IEnumerable<Film>>
     {
@@ -19,12 +18,12 @@ namespace Kinematik_Application.Queries
 
         public GetFilmsQueryHandler(KinematikDbContext dbContext)
         {
-            this._dbContext = dbContext;
+            _dbContext = dbContext;
         }
 
         public async Task<IEnumerable<Film>> Handle(GetFilmsQueryRequest request, CancellationToken cancellationToken)
         {
-            IEnumerable<Film> films = await this._dbContext.Films.ToArrayAsync(cancellationToken);
+            IEnumerable<Film> films = await _dbContext.Films.ToArrayAsync(cancellationToken);
 
             return films;
         }

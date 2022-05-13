@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Kinematik-Application\Kinematik-Application.csproj" />
+    <ProjectReference Include="..\Kinematik.Application\Kinematik.Application.csproj" />
   </ItemGroup>
 
 </Project>
