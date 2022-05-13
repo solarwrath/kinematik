@@ -3,9 +3,29 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32407.343
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kinematik.Hosting", "Kinematik.Hosting.csproj", "{B5F029F6-C2E5-40A1-90BC-A21D9B7AEE21}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{AAF2C721-FB82-40AE-BCC2-C142614C3A94}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kinematik.HttpApi", "..\HttpApi\Kinematik.HttpApi.csproj", "{4FFB8458-9C31-4D20-B8A6-8A76991E25F1}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application", "Application", "{042AAA17-55AE-44B1-A193-AD1D84D81946}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{93848A9A-EC01-47E3-AC2B-2089BD0FD3FD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{694F6FE5-3C04-4709-8643-725795ABC3CE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker", "Docker", "{9A167B7A-FB0E-49F0-98EE-FB2DF42D3CC0}"
+	ProjectSection(SolutionItems) = preProject
+		..\docker-compose.yml = ..\docker-compose.yml
+		Dockerfile = Dockerfile
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kinematik-Hosting", "Kinematik-Hosting\Kinematik-Hosting.csproj", "{5A377571-D2FA-492A-88CD-3B8541996960}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kinematik-HttpApi", "Kinematik-HttpApi\Kinematik-HttpApi.csproj", "{44DF8A35-E9F7-4E15-9E54-BCCCEF9796DB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kinematik-EntityFramework", "Kinematik-EntityFramework\Kinematik-EntityFramework.csproj", "{949570D4-A521-4240-8947-EBE4B59DC55D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kinematik-Domain", "Kinematik-Domain\Kinematik-Domain.csproj", "{5C8CDC07-521A-41FD-8D26-0217D0166D55}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kinematik-Application", "Kinematik-Application\Kinematik-Application.csproj", "{55443A32-0ECF-465E-A523-CADF87C1455F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,17 +33,36 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{B5F029F6-C2E5-40A1-90BC-A21D9B7AEE21}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B5F029F6-C2E5-40A1-90BC-A21D9B7AEE21}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B5F029F6-C2E5-40A1-90BC-A21D9B7AEE21}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B5F029F6-C2E5-40A1-90BC-A21D9B7AEE21}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4FFB8458-9C31-4D20-B8A6-8A76991E25F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4FFB8458-9C31-4D20-B8A6-8A76991E25F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4FFB8458-9C31-4D20-B8A6-8A76991E25F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4FFB8458-9C31-4D20-B8A6-8A76991E25F1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5A377571-D2FA-492A-88CD-3B8541996960}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A377571-D2FA-492A-88CD-3B8541996960}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A377571-D2FA-492A-88CD-3B8541996960}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A377571-D2FA-492A-88CD-3B8541996960}.Release|Any CPU.Build.0 = Release|Any CPU
+		{44DF8A35-E9F7-4E15-9E54-BCCCEF9796DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44DF8A35-E9F7-4E15-9E54-BCCCEF9796DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44DF8A35-E9F7-4E15-9E54-BCCCEF9796DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44DF8A35-E9F7-4E15-9E54-BCCCEF9796DB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{949570D4-A521-4240-8947-EBE4B59DC55D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{949570D4-A521-4240-8947-EBE4B59DC55D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{949570D4-A521-4240-8947-EBE4B59DC55D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{949570D4-A521-4240-8947-EBE4B59DC55D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5C8CDC07-521A-41FD-8D26-0217D0166D55}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C8CDC07-521A-41FD-8D26-0217D0166D55}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C8CDC07-521A-41FD-8D26-0217D0166D55}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C8CDC07-521A-41FD-8D26-0217D0166D55}.Release|Any CPU.Build.0 = Release|Any CPU
+		{55443A32-0ECF-465E-A523-CADF87C1455F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{55443A32-0ECF-465E-A523-CADF87C1455F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{55443A32-0ECF-465E-A523-CADF87C1455F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{55443A32-0ECF-465E-A523-CADF87C1455F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{5A377571-D2FA-492A-88CD-3B8541996960} = {AAF2C721-FB82-40AE-BCC2-C142614C3A94}
+		{44DF8A35-E9F7-4E15-9E54-BCCCEF9796DB} = {AAF2C721-FB82-40AE-BCC2-C142614C3A94}
+		{949570D4-A521-4240-8947-EBE4B59DC55D} = {694F6FE5-3C04-4709-8643-725795ABC3CE}
+		{5C8CDC07-521A-41FD-8D26-0217D0166D55} = {93848A9A-EC01-47E3-AC2B-2089BD0FD3FD}
+		{55443A32-0ECF-465E-A523-CADF87C1455F} = {042AAA17-55AE-44B1-A193-AD1D84D81946}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A95DA1AC-F7EC-4CF4-BAA4-6080C9592C19}

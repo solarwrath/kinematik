@@ -1,2 +1,4 @@
-.cache
+.cache/
+.env
 nginx.conf.bak
+.vs/
