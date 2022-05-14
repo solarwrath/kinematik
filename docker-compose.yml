@@ -19,3 +19,26 @@ services:
       - "1433:1433"
     volumes:
       - ${DB_VOLUME_PATH:?err}:/var/opt/mssql/data
+
+  client-frontend:
+    build: ./kinematik-client-frontend
+    image: kinematik-client-frontend:latest
+    ports:
+      - "5001:3000"
+
+  admin-frontend:
+    build: ./kinematik-admin-frontend
+    image: kinematik-admin-frontend:latest
+    ports:
+      - "5002:3000"
+
+  reverse-proxy:
+    image: nginx:latest
+    depends_on:
+      - backend
+      # - client-frontend
+      # - admin-frontend
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - "80:80"
