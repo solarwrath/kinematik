@@ -15,6 +15,8 @@
     <PackageReference Include="MediatR" Version="10.0.1" />
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="10.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Analyzers" Version="6.0.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.5">
@@ -35,6 +37,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Kinematik.Application\Kinematik.Application.csproj" />
     <ProjectReference Include="..\Kinematik.EntityFramework\Kinematik.EntityFramework.csproj" />
+    <ProjectReference Include="..\Kinematik.FileStorage\Kinematik.FileStorage.csproj" />
     <ProjectReference Include="..\Kinematik.HttpApi\Kinematik.HttpApi.csproj" />
   </ItemGroup>
 

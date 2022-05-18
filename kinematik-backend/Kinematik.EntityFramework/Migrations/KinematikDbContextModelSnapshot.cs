@@ -35,15 +35,23 @@ namespace Kinematik.EntityFramework.Migrations
                         .IsUnicode(true)
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Duration")
-                        .HasColumnType("int");
+                    b.Property<string>("FeaturedImagePath")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal>("Rating")
-                        .HasPrecision(4, 2)
-                        .HasColumnType("decimal(4,2)");
+                    b.Property<string>("ImdbID")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PosterPath")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("Runtime")
+                        .HasColumnType("int");
 
                     b.Property<string>("Title")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TrailerUrl")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
@@ -51,7 +59,22 @@ namespace Kinematik.EntityFramework.Migrations
                     b.ToTable("Films");
                 });
 
-            modelBuilder.Entity("Kinematik.Domain.Entities.FilmGenre", b =>
+            modelBuilder.Entity("Kinematik.Domain.Entities.FilmToGenrePair", b =>
+                {
+                    b.Property<int>("FilmID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("GenreID")
+                        .HasColumnType("int");
+
+                    b.HasKey("FilmID", "GenreID");
+
+                    b.HasIndex("GenreID");
+
+                    b.ToTable("FilmToGenrePairs");
+                });
+
+            modelBuilder.Entity("Kinematik.Domain.Entities.Genre", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -59,30 +82,42 @@ namespace Kinematik.EntityFramework.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"), 1L, 1);
 
-                    b.Property<int?>("FilmID")
-                        .HasColumnType("int");
-
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
 
-                    b.HasIndex("FilmID");
-
-                    b.ToTable("FilmGenre");
+                    b.ToTable("Genres");
                 });
 
-            modelBuilder.Entity("Kinematik.Domain.Entities.FilmGenre", b =>
+            modelBuilder.Entity("Kinematik.Domain.Entities.FilmToGenrePair", b =>
                 {
-                    b.HasOne("Kinematik.Domain.Entities.Film", null)
-                        .WithMany("Genres")
-                        .HasForeignKey("FilmID");
+                    b.HasOne("Kinematik.Domain.Entities.Film", "Film")
+                        .WithMany("GenrePairs")
+                        .HasForeignKey("FilmID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Kinematik.Domain.Entities.Genre", "Genre")
+                        .WithMany("FilmPairs")
+                        .HasForeignKey("GenreID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Film");
+
+                    b.Navigation("Genre");
                 });
 
             modelBuilder.Entity("Kinematik.Domain.Entities.Film", b =>
                 {
-                    b.Navigation("Genres");
+                    b.Navigation("GenrePairs");
+                });
+
+            modelBuilder.Entity("Kinematik.Domain.Entities.Genre", b =>
+                {
+                    b.Navigation("FilmPairs");
                 });
 #pragma warning restore 612, 618
         }

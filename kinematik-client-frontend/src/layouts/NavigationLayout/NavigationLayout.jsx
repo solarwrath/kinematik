@@ -9,7 +9,7 @@ const NavigationLayout = (props) => {
             <nav className={classes['navbar']}>
                 <ul className={classes['navbar-left-list']}>
                     <li>
-                        <a href="/">Films123</a>
+                        <a href="/">Фільми</a>
                     </li>
                 </ul>
                 <a className={classes['navbar-logo-container']} href="/">
@@ -17,10 +17,10 @@ const NavigationLayout = (props) => {
                 </a>
                 <ul className={classes['navbar-right-list']}>
                     <li>
-                        <a href="/">Order Snacks</a>
+                        <a href="/">Замовити снеки</a>
                     </li>
                     <li>
-                        <a href="/">Contact</a>
+                        <a href="/">Контакти</a>
                     </li>
                 </ul>
             </nav>

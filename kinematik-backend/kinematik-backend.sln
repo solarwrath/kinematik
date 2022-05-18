@@ -13,6 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastru
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker", "Docker", "{9A167B7A-FB0E-49F0-98EE-FB2DF42D3CC0}"
 	ProjectSection(SolutionItems) = preProject
+		.dockerignore = .dockerignore
 		..\docker-compose.yml = ..\docker-compose.yml
 		Dockerfile = Dockerfile
 	EndProjectSection
@@ -26,6 +27,19 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kinematik.Domain", "Kinematik.Domain\Kinematik.Domain.csproj", "{4F7CEC6F-29AF-437D-AAA2-194EED966231}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kinematik.Application", "Kinematik.Application\Kinematik.Application.csproj", "{6F3D64D9-6979-475C-9F2B-7167A54BEA59}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Git", "Git", "{85EB22FF-3DEA-4A21-8151-C473CD445DCE}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Configuration", "Configuration", "{F5A0BFA4-3ED6-48E3-AE74-387E3D3C6027}"
+	ProjectSection(SolutionItems) = preProject
+		..\.env = ..\.env
+		..\nginx.conf = ..\nginx.conf
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kinematik.FileStorage", "Kinematik.FileStorage\Kinematik.FileStorage.csproj", "{D2F2336F-1651-454E-B615-0D8EEB9EE831}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,16 +67,23 @@ Global
 		{6F3D64D9-6979-475C-9F2B-7167A54BEA59}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6F3D64D9-6979-475C-9F2B-7167A54BEA59}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6F3D64D9-6979-475C-9F2B-7167A54BEA59}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D2F2336F-1651-454E-B615-0D8EEB9EE831}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D2F2336F-1651-454E-B615-0D8EEB9EE831}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D2F2336F-1651-454E-B615-0D8EEB9EE831}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D2F2336F-1651-454E-B615-0D8EEB9EE831}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{9A167B7A-FB0E-49F0-98EE-FB2DF42D3CC0} = {F5A0BFA4-3ED6-48E3-AE74-387E3D3C6027}
 		{88C51E6B-672E-4461-83C0-D8ADC856F7A5} = {AAF2C721-FB82-40AE-BCC2-C142614C3A94}
 		{439F8FB7-2221-4FC8-8C87-5E8FB4EF7BD1} = {AAF2C721-FB82-40AE-BCC2-C142614C3A94}
 		{4EF38714-2137-4C27-A01B-9F1C58686373} = {694F6FE5-3C04-4709-8643-725795ABC3CE}
 		{4F7CEC6F-29AF-437D-AAA2-194EED966231} = {93848A9A-EC01-47E3-AC2B-2089BD0FD3FD}
 		{6F3D64D9-6979-475C-9F2B-7167A54BEA59} = {042AAA17-55AE-44B1-A193-AD1D84D81946}
+		{85EB22FF-3DEA-4A21-8151-C473CD445DCE} = {F5A0BFA4-3ED6-48E3-AE74-387E3D3C6027}
+		{D2F2336F-1651-454E-B615-0D8EEB9EE831} = {694F6FE5-3C04-4709-8643-725795ABC3CE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A95DA1AC-F7EC-4CF4-BAA4-6080C9592C19}

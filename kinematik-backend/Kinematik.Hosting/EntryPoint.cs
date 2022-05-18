@@ -1,16 +1,25 @@
 using System.Reflection;
+using System.Text.Json.Serialization;
 
+using Kinematik.Application.Ports;
 using Kinematik.EntityFramework;
+using Kinematik.FileStorage;
 
-using Kinematik.Hosting.Swagger;
+using kinematik_backend.Swagger;
 
 using MediatR;
 
+using Microsoft.AspNetCore.Http.Json;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.OpenApi.Models;
 
+using Newtonsoft.Json;
+
 using Swashbuckle.AspNetCore.SwaggerGen;
+using JsonConverter = System.Text.Json.Serialization.JsonConverter;
 
 Assembly httpApiAssembly = Assembly.Load("Kinematik.HttpApi");
 Assembly applicationAssembly = Assembly.Load("Kinematik.Application");
@@ -34,12 +43,11 @@ void ConfigureConfiguration(ConfigurationManager configuration)
 
 void ConfigureServices(IServiceCollection services, ConfigurationManager configuration)
 {
-    services.AddMediatR(applicationAssembly);
-
     services.AddDbContext<KinematikDbContext>(options =>
     {
         options.UseSqlServer(Environment.GetEnvironmentVariable("KINEMATIK_CONNECTION_STRING")!);
     });
+    services.AddDatabaseDeveloperPageExceptionFilter();
 
     services.AddCors(options =>
     {
@@ -58,15 +66,23 @@ void ConfigureServices(IServiceCollection services, ConfigurationManager configu
         });
     });
 
-    services.AddMvc();
+    JsonConvert.DefaultSettings = () => new JsonSerializerSettings{
+        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+    };
+
+    services
+        .AddMvc()
+        .AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
+
+    services
+        .AddControllers()
+        .AddApplicationPart(httpApiAssembly)
+        .AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
+
     services.AddRouting(options =>
     {
         options.LowercaseUrls = true;
     });
-
-    services
-        .AddControllers()
-        .AddApplicationPart(httpApiAssembly);
 
     services.AddSwaggerGen(configuration =>
     {
@@ -88,7 +104,11 @@ void ConfigureServices(IServiceCollection services, ConfigurationManager configu
         configuration.SchemaFilter<EnumSchemaFilter>();
     });
 
-    services.AddDatabaseDeveloperPageExceptionFilter();
+    services.AddMediatR(applicationAssembly);
+
+    services.TryAddSingleton<IFileStorageService, OnDiskFileStorageService>();
+    services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+    services.AddHttpClient();
 }
 
 void ConfigureMiddleware(
@@ -116,6 +136,18 @@ void ConfigureMiddleware(
 
     app.UseHttpsRedirection();
     app.UseStaticFiles();
+
+    string fileUploadsDirectoryName = "FileUploads";
+    string fileUploadsDirectoryPath = Path.Combine(Directory.GetCurrentDirectory(), "FileUploads");
+    if (!Directory.Exists(fileUploadsDirectoryPath))
+    {
+        Directory.CreateDirectory(fileUploadsDirectoryPath);
+    }
+    app.UseStaticFiles(new StaticFileOptions()
+    {
+        FileProvider = new PhysicalFileProvider(fileUploadsDirectoryPath),
+        RequestPath = new PathString($"/{fileUploadsDirectoryName}")
+    });
 
     app.UseRouting();
 

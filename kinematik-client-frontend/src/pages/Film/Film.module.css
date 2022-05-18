@@ -85,6 +85,7 @@
     }
 
     & .film-description {
+        white-space: pre-line;
         font-family: var(--sans-serif-font);
         font-size: 2rem;
         line-height: 1.5;

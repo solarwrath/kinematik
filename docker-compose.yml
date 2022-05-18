@@ -9,6 +9,9 @@ services:
       - database
     environment:
       - KINEMATIK_CONNECTION_STRING=Server=database,1433; Database=Kinematik; User=sa; Password=${DB_PASSWORD:?err};
+      - IMDB_API_KEY=${IMDB_API_KEY:?err}
+    volumes:
+      - "./kinematik-backend/Kinematik.Hosting/FileUploads/:/app/FileUploads/"
 
   database:
     image: mcr.microsoft.com/mssql/server:2019-latest
@@ -20,17 +23,17 @@ services:
     volumes:
       - ${DB_VOLUME_PATH:?err}:/var/opt/mssql/data
 
-  client-frontend:
-    build: ./kinematik-client-frontend
-    image: kinematik-client-frontend:latest
-    ports:
-      - "5001:3000"
+  #client-frontend:
+  #  build: ./kinematik-client-frontend
+  #  image: kinematik-client-frontend:latest
+  #  ports:
+  #    - "5001:3000"
 
-  admin-frontend:
-    build: ./kinematik-admin-frontend
-    image: kinematik-admin-frontend:latest
-    ports:
-      - "5002:3000"
+  #admin-frontend:
+  #  build: ./kinematik-admin-frontend
+  #  image: kinematik-admin-frontend:latest
+  #  ports:
+  #    - "5002:3000"
 
   reverse-proxy:
     image: nginx:latest

@@ -10,7 +10,7 @@ import Booking from './pages/Booking/Booking';
 import 'normalize.css';
 import './index.css';
 
-window.apiBaseUrl = 'https://localhost:44317/api';
+window.apiBaseUrl = 'https://localhost:58273/api';
 
 ReactDOM.render(
     <React.StrictMode>

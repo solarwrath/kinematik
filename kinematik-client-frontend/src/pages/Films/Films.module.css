@@ -9,21 +9,12 @@
         'poster-carousel'
         'poster-carousel-navigation';
 
-    /* Fixes for Swiper interaction with CSS Grid parent */
-    & .swiper-wrapper {
-        display: grid;
-
-        & .swiper-container {
-            width: 100%;
-        }
+    & :global(.swiper) {
+        height: 100%;
     }
 }
 
 .poster-carousel {
-    grid-area: poster-carousel;
-    display: flex;
-    flex-wrap: wrap;
-
     padding-top: 2rem;
     padding-inline: 2rem;
 
