@@ -9,6 +9,8 @@ namespace Kinematik.EntityFramework
         public DbSet<Film> Films { get; set; } = null!;
         public DbSet<Genre> Genres { get; set; } = null!;
         public DbSet<FilmToGenrePair> FilmToGenrePairs { get; set; } = null!;
+        public DbSet<Hall> Halls { get; set; } = null!;
+        public DbSet<Session> Sessions { get; set; } = null!;
 
         public KinematikDbContext(DbContextOptions<KinematikDbContext> options) : base(options)
         {

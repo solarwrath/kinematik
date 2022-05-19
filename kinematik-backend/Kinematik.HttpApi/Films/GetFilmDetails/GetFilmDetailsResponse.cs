@@ -6,6 +6,7 @@
         public string? PosterUrl { get; set; }
         public string Description { get; set; } = null!;
         public IEnumerable<int>? GenreIDs { get; set; }
+        public int? LanguageID { get; set; }
         public int? Runtime { get; set; }
         public decimal? Rating { get; set; }
         public string? TrailerUrl { get; set; }

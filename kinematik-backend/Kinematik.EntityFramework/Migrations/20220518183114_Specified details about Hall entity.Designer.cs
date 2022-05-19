@@ -4,6 +4,7 @@ using Kinematik.EntityFramework;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Kinematik.EntityFramework.Migrations
 {
     [DbContext(typeof(KinematikDbContext))]
-    partial class KinematikDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220518183114_Specified details about Hall entity")]
+    partial class SpecifieddetailsaboutHallentity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -134,34 +136,6 @@ namespace Kinematik.EntityFramework.Migrations
                     b.ToTable("Language");
                 });
 
-            modelBuilder.Entity("Kinematik.Domain.Entities.Session", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"), 1L, 1);
-
-                    b.Property<int>("FilmID")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("HallID")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("StartAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("FilmID");
-
-                    b.HasIndex("HallID");
-
-                    b.HasIndex("StartAt");
-
-                    b.ToTable("Sessions");
-                });
-
             modelBuilder.Entity("Kinematik.Domain.Entities.Film", b =>
                 {
                     b.HasOne("Kinematik.Domain.Entities.Language", "Language")
@@ -190,38 +164,14 @@ namespace Kinematik.EntityFramework.Migrations
                     b.Navigation("Genre");
                 });
 
-            modelBuilder.Entity("Kinematik.Domain.Entities.Session", b =>
-                {
-                    b.HasOne("Kinematik.Domain.Entities.Film", "Film")
-                        .WithMany("Sessions")
-                        .HasForeignKey("FilmID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Kinematik.Domain.Entities.Hall", "Hall")
-                        .WithMany("Sessions")
-                        .HasForeignKey("HallID");
-
-                    b.Navigation("Film");
-
-                    b.Navigation("Hall");
-                });
-
             modelBuilder.Entity("Kinematik.Domain.Entities.Film", b =>
                 {
                     b.Navigation("GenrePairs");
-
-                    b.Navigation("Sessions");
                 });
 
             modelBuilder.Entity("Kinematik.Domain.Entities.Genre", b =>
                 {
                     b.Navigation("FilmPairs");
-                });
-
-            modelBuilder.Entity("Kinematik.Domain.Entities.Hall", b =>
-                {
-                    b.Navigation("Sessions");
                 });
 #pragma warning restore 612, 618
         }

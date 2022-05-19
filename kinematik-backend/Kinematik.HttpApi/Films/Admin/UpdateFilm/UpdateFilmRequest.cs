@@ -7,6 +7,7 @@ namespace Kinematik.HttpApi.Films.Admin.UpdateFilm
         public string Title { get; set; } = null!;
         public string Description { get; set; } = null!;
         public string? SerializedGenreIDs { get; set; }
+        public string? SerializedLanguageID { get; set; }
         public string? SerializedRuntime { get; set; }
         public string? ImdbID { get; set; }
         public string? TrailerUrl { get; set; }

@@ -35,7 +35,7 @@ export default Vue.extend({
         poster: null,
         description: '',
         genreIDs: [],
-        language: 'ukrainian',
+        languageID: 1,
         runtime: 0,
         imdbID: '',
         trailerUrl: '',
@@ -50,6 +50,7 @@ export default Vue.extend({
       requestData.set('Title', this.filmFormData.title);
       requestData.set('Description', this.filmFormData.description);
       requestData.set('SerializedGenreIDs', JSON.stringify(this.filmFormData.genreIDs));
+      requestData.set('SerializedLanguageID', JSON.stringify(this.filmFormData.languageID));
       requestData.set('SerializedRuntime', JSON.stringify(this.filmFormData.runtime));
       requestData.set('ImdbID', this.filmFormData.imdbID);
       requestData.set('TrailerUrl', this.filmFormData.trailerUrl);

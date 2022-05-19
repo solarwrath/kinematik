@@ -3,9 +3,10 @@ using Kinematik.Domain.Entities;
 using Kinematik.EntityFramework;
 
 using MediatR;
+
 using Microsoft.EntityFrameworkCore;
 
-namespace Kinematik.Application.Commands.Admin
+namespace Kinematik.Application.Commands.Admin.Films
 {
     public class UpdateFilmCommandInput : IRequest<Film>
     {
@@ -16,6 +17,7 @@ namespace Kinematik.Application.Commands.Admin
         public byte[]? PosterImageContents { get; set; }
         public string Description { get; set; }
         public IEnumerable<int>? GenreIDs { get; set; }
+        public int? LanguageID { get; set; }
         public int? Runtime { get; set; }
         public string? ImdbID { get; set; }
         public string? TrailerUrl { get; set; }
@@ -68,6 +70,7 @@ namespace Kinematik.Application.Commands.Admin
             film.ImdbID = input.ImdbID;
             film.Runtime = input.Runtime;
             film.TrailerUrl = input.TrailerUrl;
+            film.LanguageID = input.LanguageID;
 
             if (input.WasFeaturedImageDeleted)
             {
@@ -97,8 +100,8 @@ namespace Kinematik.Application.Commands.Admin
             {
                 Film = film,
                 GenreID = filmGenreId
-            });
-            await _dbContext.FilmToGenrePairs.AddRangeAsync(addedPairs, cancellationToken);
+            }); 
+            _dbContext.FilmToGenrePairs.AddRange(addedPairs);
 
             await _dbContext.SaveChangesAsync(cancellationToken);
 

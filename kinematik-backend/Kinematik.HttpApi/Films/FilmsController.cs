@@ -1,6 +1,6 @@
-﻿using Kinematik.Application.Commands.Admin;
-using Kinematik.Application.Queries;
-using Kinematik.Application.Queries.Admin;
+﻿using Kinematik.Application.Commands.Admin.Films;
+using Kinematik.Application.Queries.Admin.Films;
+using Kinematik.Application.Queries.Films;
 using Kinematik.Domain.Entities;
 using Kinematik.HttpApi.Films.Admin.CreateFilm;
 using Kinematik.HttpApi.Films.Admin.GetFilmsList;
@@ -29,7 +29,6 @@ namespace Kinematik.HttpApi.Films
         }
 
         [HttpGet]
-        [Route("list")]
         [SwaggerOperation(
             Summary = "Повертає список існуючих фільмів"
         )]
@@ -73,6 +72,7 @@ namespace Kinematik.HttpApi.Films
                 PosterUrl = queryOutput.PosterUrl,
                 Description = queryOutput.Description,
                 GenreIDs = queryOutput.GenreIDs,
+                LanguageID = queryOutput.LanguageID,
                 Runtime = queryOutput.Runtime,
                 ImdbID = queryOutput.ImdbID,
                 TrailerUrl = queryOutput.TrailerUrl,
@@ -91,37 +91,38 @@ namespace Kinematik.HttpApi.Films
             CancellationToken cancellationToken = default
         )
         {
-            CreateFilmCommandInput commandInputInput = new CreateFilmCommandInput
+            CreateFilmCommandInput commandInput = new CreateFilmCommandInput
             {
                 Title = incomingRequest.Title,
                 Description = incomingRequest.Description,
-                GenreIDs = JsonConvert.DeserializeObject<int[]>(incomingRequest.SerializedGenreIDs),
-                Runtime = JsonConvert.DeserializeObject<int>(incomingRequest.SerializedRuntime),
+                GenreIDs = JsonConvert.DeserializeObject<int[]?>(incomingRequest.SerializedGenreIDs),
+                LanguageID = JsonConvert.DeserializeObject<int?>(incomingRequest.SerializedLanguageID),
+                Runtime = JsonConvert.DeserializeObject<int?>(incomingRequest.SerializedRuntime),
                 ImdbID = incomingRequest.ImdbID,
                 TrailerUrl = incomingRequest.TrailerUrl
             };
 
             if (incomingRequest.Poster != null)
             {
-                commandInputInput.PosterImageFileName = incomingRequest.Poster.FileName;
+                commandInput.PosterImageFileName = incomingRequest.Poster.FileName;
                 using (MemoryStream posterImageStream = new MemoryStream())
                 {
                     await incomingRequest.Poster.CopyToAsync(posterImageStream, cancellationToken);
-                    commandInputInput.PosterImageContents = posterImageStream.ToArray();
+                    commandInput.PosterImageContents = posterImageStream.ToArray();
                 }
             }
 
             if (incomingRequest.FeaturedImage != null)
             {
-                commandInputInput.FeaturedImageFileName = incomingRequest.FeaturedImage.FileName;
+                commandInput.FeaturedImageFileName = incomingRequest.FeaturedImage.FileName;
                 using (MemoryStream featuredImageStream = new MemoryStream())
                 {
                     await incomingRequest.FeaturedImage.CopyToAsync(featuredImageStream, cancellationToken);
-                    commandInputInput.FeaturedImageContents = featuredImageStream.ToArray();
+                    commandInput.FeaturedImageContents = featuredImageStream.ToArray();
                 }
             }
 
-            Film createdFilm = await _mediator.Send(commandInputInput, cancellationToken);
+            Film createdFilm = await _mediator.Send(commandInput, cancellationToken);
 
             return Ok(createdFilm);
         }
@@ -142,8 +143,9 @@ namespace Kinematik.HttpApi.Films
                 FilmID = filmID,
                 Title = incomingRequest.Title,
                 Description = incomingRequest.Description,
-                GenreIDs = JsonConvert.DeserializeObject<int[]>(incomingRequest.SerializedGenreIDs),
-                Runtime = JsonConvert.DeserializeObject<int>(incomingRequest.SerializedRuntime),
+                GenreIDs = JsonConvert.DeserializeObject<int[]?>(incomingRequest.SerializedGenreIDs),
+                LanguageID = JsonConvert.DeserializeObject<int?>(incomingRequest.SerializedLanguageID),
+                Runtime = JsonConvert.DeserializeObject<int?>(incomingRequest.SerializedRuntime),
                 ImdbID = incomingRequest.ImdbID,
                 TrailerUrl = incomingRequest.TrailerUrl,
                 WasPosterImageDeleted = JsonConvert.DeserializeObject<bool>(incomingRequest.SerializedWasPosterDeleted),
@@ -235,6 +237,7 @@ namespace Kinematik.HttpApi.Films
                 PosterUrl = queryOutput.PosterUrl,
                 Description = queryOutput.Description,
                 GenreIDs = queryOutput.GenreIDs,
+                LanguageID = queryOutput.LanguageID,
                 Runtime = queryOutput.Runtime,
                 Rating = queryOutput.Rating,
                 TrailerUrl = queryOutput.TrailerUrl,

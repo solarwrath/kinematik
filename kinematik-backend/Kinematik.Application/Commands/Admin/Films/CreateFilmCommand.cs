@@ -4,7 +4,7 @@ using Kinematik.EntityFramework;
 
 using MediatR;
 
-namespace Kinematik.Application.Commands.Admin
+namespace Kinematik.Application.Commands.Admin.Films
 {
     public class CreateFilmCommandInput : IRequest<Film>
     {
@@ -13,6 +13,7 @@ namespace Kinematik.Application.Commands.Admin
         public byte[]? PosterImageContents { get; set; }
         public string Description { get; set; }
         public IEnumerable<int>? GenreIDs { get; set; }
+        public int? LanguageID { get; set; }
         public int? Runtime { get; set; }
         public string? ImdbID { get; set; }
         public string? TrailerUrl { get; set; }
@@ -42,7 +43,8 @@ namespace Kinematik.Application.Commands.Admin
                 Description = input.Description,
                 Runtime = input.Runtime,
                 ImdbID = input.ImdbID,
-                TrailerUrl = input.TrailerUrl
+                TrailerUrl = input.TrailerUrl,
+                LanguageID = input.LanguageID
             };
 
             createdFilm.GenrePairs = input.GenreIDs
@@ -54,7 +56,7 @@ namespace Kinematik.Application.Commands.Admin
                 .ToArray();
 
 
-            await _dbContext.AddAsync(createdFilm, cancellationToken);
+            _dbContext.Add(createdFilm);
             await _dbContext.SaveChangesAsync(cancellationToken);
 
             bool hasPosterImage = input.PosterImageContents != null
@@ -67,7 +69,7 @@ namespace Kinematik.Application.Commands.Admin
                 createdFilm.PosterPath = posterStoragePath;
             }
 
-            bool hasFeaturedImage = input.FeaturedImageContents != null 
+            bool hasFeaturedImage = input.FeaturedImageContents != null
                                     && input.FeaturedImageContents.Length > 0
                                     && !string.IsNullOrWhiteSpace(input.FeaturedImageFileName);
             if (hasFeaturedImage)

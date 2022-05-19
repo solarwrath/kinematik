@@ -75,10 +75,12 @@ export default Vue.extend({
         {
           key: 'edit',
           label: '',
+          class: 'action-button',
         },
         {
           key: 'remove',
           label: '',
+          class: 'action-button',
         },
       ],
     };
@@ -97,7 +99,7 @@ export default Vue.extend({
   },
   methods: {
     async getFilmsList() {
-      const response = await axios.get('/films/list');
+      const response = await axios.get('/films');
 
       return response.data.films;
     },
@@ -115,5 +117,9 @@ export default Vue.extend({
 <style scoped lang="scss">
 .poster {
   max-height: 200px;
+}
+
+.action-button {
+  width: 100px;
 }
 </style>

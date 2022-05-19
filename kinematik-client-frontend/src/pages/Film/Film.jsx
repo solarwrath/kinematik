@@ -9,6 +9,7 @@ import ReactPlayer from 'react-player/youtube';
 import CircularProgress from '@mui/material/CircularProgress';
 
 import genres from '../../domain/genres';
+import languages from '../../domain/languages';
 
 const runtimeMinutesToString = function (runtimeMinutes) {
     const fullHours = Math.floor(runtimeMinutes / 60);
@@ -44,7 +45,6 @@ const Film = (props) => {
 
     film = {
         ...film,
-        airLanguage: 'Українська',
         notableStaff: [
             {
                 picture: 'https://i.pravatar.cc?img=1',
@@ -145,7 +145,9 @@ const Film = (props) => {
                                     <div>
                                         {runtimeMinutesToString(film.runtime)}
                                     </div>
-                                    <div>{film.airLanguage}</div>
+                                    {film.languageID != null && (
+                                        <div>{languages[film.languageID]}</div>
+                                    )}
                                 </div>
 
                                 <h1 className={classes['film-title']}>

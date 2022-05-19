@@ -1,42 +1,34 @@
-﻿using System.Globalization;
-
-using Kinematik.Application.Ports;
-using Kinematik.Application.ThirdParty.ImdbAPI;
+﻿using Kinematik.Application.Ports;
 using Kinematik.EntityFramework;
 
 using MediatR;
 
 using Microsoft.EntityFrameworkCore;
 
-using Newtonsoft.Json;
-
-namespace Kinematik.Application.Queries
+namespace Kinematik.Application.Queries.Admin.Films
 {
-    public class GetFilmDetailsQueryInput : IRequest<GetFilmDetailsQueryOutput>
+    public class GetFullFilmDataQueryInput : IRequest<GetFullFilmDataQueryOutput>
     {
         public int FilmID { get; set; }
     }
 
-    public class GetFilmDetailsQueryHandler : IRequestHandler<GetFilmDetailsQueryInput, GetFilmDetailsQueryOutput>
+    public class GetFullFilmDataQueryHandler : IRequestHandler<GetFullFilmDataQueryInput, GetFullFilmDataQueryOutput>
     {
         private readonly KinematikDbContext _dbContext;
         private readonly IFileStorageService _fileStorageService;
-        private readonly IHttpClientFactory _httpClientFactory;
 
-        public GetFilmDetailsQueryHandler(
+        public GetFullFilmDataQueryHandler(
             KinematikDbContext dbContext,
-            IFileStorageService fileStorageService,
-            IHttpClientFactory httpClientFactory
+            IFileStorageService fileStorageService
         )
         {
             _dbContext = dbContext;
             _fileStorageService = fileStorageService;
-            _httpClientFactory = httpClientFactory;
         }
 
-        public async Task<GetFilmDetailsQueryOutput> Handle(GetFilmDetailsQueryInput request, CancellationToken cancellationToken)
+        public async Task<GetFullFilmDataQueryOutput> Handle(GetFullFilmDataQueryInput request, CancellationToken cancellationToken)
         {
-            GetFilmDetailsQueryOutput output = new GetFilmDetailsQueryOutput();
+            GetFullFilmDataQueryOutput output = new GetFullFilmDataQueryOutput();
 
             // TODO Introduce Language
             var film = await _dbContext.Films
@@ -46,6 +38,7 @@ namespace Kinematik.Application.Queries
                     film.Title,
                     film.PosterPath,
                     film.Description,
+                    film.LanguageID,
                     film.ImdbID,
                     film.Runtime,
                     film.TrailerUrl,
@@ -62,41 +55,27 @@ namespace Kinematik.Application.Queries
             output.Title = film.Title;
             output.PosterUrl = _fileStorageService.GetAccessingPath(film.PosterPath);
             output.Description = film.Description;
+            output.LanguageID = film.LanguageID;
             output.Runtime = film.Runtime;
+            output.ImdbID = film.ImdbID;
             output.TrailerUrl = film.TrailerUrl;
             output.FeaturedImageUrl = _fileStorageService.GetAccessingPath(film.FeaturedImagePath);
             output.GenreIDs = film.GenreIDs;
-
-            if (!string.IsNullOrWhiteSpace(film.ImdbID))
-            {
-                string imdbApiKey = Environment.GetEnvironmentVariable("IMDB_API_KEY");
-                string endpointUrl = $"https://imdb-api.com/en/API/Ratings/{imdbApiKey}/{film.ImdbID}";
-
-                HttpClient httpClient = _httpClientFactory.CreateClient();
-                Stream responseStream = await httpClient.GetStreamAsync(endpointUrl, cancellationToken);
-
-                using (StreamReader responseStringReader = new StreamReader(responseStream))
-                {
-                    using (JsonTextReader responseJsonReader = new JsonTextReader(responseStringReader))
-                    {
-                        ImdbRatingResponse imdbRating = new JsonSerializer().Deserialize<ImdbRatingResponse>(responseJsonReader);
-                        output.Rating = decimal.Parse(imdbRating.IMDb, new NumberFormatInfo { NumberDecimalSeparator = "." });
-                    }
-                }
-            }
 
             return output;
         }
     }
 
-    public class GetFilmDetailsQueryOutput
+    public class GetFullFilmDataQueryOutput
     {
+        public int ID { get; set; }
         public string Title { get; set; } = null!;
         public string? PosterUrl { get; set; }
         public string Description { get; set; } = null!;
         public IEnumerable<int>? GenreIDs { get; set; }
+        public int? LanguageID { get; set; }
         public int? Runtime { get; set; }
-        public decimal? Rating { get; set; }
+        public string? ImdbID { get; set; }
         public string? TrailerUrl { get; set; }
         public string? FeaturedImageUrl { get; set; }
     }

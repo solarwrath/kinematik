@@ -40,30 +40,26 @@ export default Vue.extend({
   data() {
     return {
       filmID: this.$route.params.id,
-      initialFormData: null as FilmFormData | null,
+      initialFilmFormData: null as FilmFormData | null,
       currentFilmFormData: null as FilmFormData | null,
     };
   },
   mounted: async function () {
     const response = await axios.get(`/films/${this.filmID}`);
 
-    const film = {
+    this.initialFilmFormData = {
       title: response.data.title,
       posterUrl: response.data.posterUrl,
       description: response.data.description,
       genreIDs: response.data.genreIDs,
+      languageID: response.data.languageID,
       runtime: response.data.runtime,
       imdbID: response.data.imdbID,
       trailerUrl: response.data.trailerUrl,
       featuredImageUrl: response.data.featuredImageUrl,
     };
 
-    this.initialFormData = {
-      ...film,
-      language: 'ukrainian',
-    };
-
-    this.currentFilmFormData = _.cloneDeep(this.initialFormData);
+    this.currentFilmFormData = _.cloneDeep(this.initialFilmFormData);
   },
   methods: {
     updateFilm() {
@@ -76,6 +72,7 @@ export default Vue.extend({
       requestData.set('Title', this.currentFilmFormData.title);
       requestData.set('Description', this.currentFilmFormData.description);
       requestData.set('SerializedGenreIDs', JSON.stringify(this.currentFilmFormData.genreIDs));
+      requestData.set('SerializedLanguageID', JSON.stringify(this.currentFilmFormData.languageID));
       requestData.set('SerializedRuntime', JSON.stringify(this.currentFilmFormData.runtime));
       requestData.set('ImdbID', this.currentFilmFormData.imdbID);
       requestData.set('TrailerUrl', this.currentFilmFormData.trailerUrl);
@@ -85,7 +82,7 @@ export default Vue.extend({
         requestData.set('Poster', fileToUpload, fileToUpload.name);
       }
       const wasPosterDeleted =
-        !this.currentFilmFormData.posterUrl && this.initialFormData.posterUrl !== null;
+        !this.currentFilmFormData.posterUrl && this.initialFilmFormData.posterUrl !== null;
       requestData.set('SerializedWasPosterDeleted', JSON.stringify(wasPosterDeleted));
 
       if (this.currentFilmFormData.featuredImage) {
@@ -94,7 +91,7 @@ export default Vue.extend({
       }
       const wasFeaturedImageDeleted =
         !this.currentFilmFormData.featuredImageUrl &&
-        this.initialFormData.featuredImageUrl !== null;
+        this.initialFilmFormData.featuredImageUrl !== null;
       requestData.set('SerializedWasFeaturedImageDeleted', JSON.stringify(wasFeaturedImageDeleted));
 
       axios.put(`/films/${this.filmID}`, requestData);

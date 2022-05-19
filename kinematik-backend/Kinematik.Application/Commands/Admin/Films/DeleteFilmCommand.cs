@@ -3,7 +3,7 @@ using Kinematik.EntityFramework;
 
 using MediatR;
 
-namespace Kinematik.Application.Commands.Admin
+namespace Kinematik.Application.Commands.Admin.Films
 {
     public class DeleteFilmCommandInput : IRequest
     {
@@ -25,7 +25,7 @@ namespace Kinematik.Application.Commands.Admin
         {
             Film? film = await _dbContext.Films.FindAsync(new object[] { input.FilmID }, cancellationToken);
             _dbContext.Films.Remove(film);
-            
+
             await _dbContext.SaveChangesAsync(cancellationToken);
 
             return Unit.Value;

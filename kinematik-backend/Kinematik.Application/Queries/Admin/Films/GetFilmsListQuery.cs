@@ -1,12 +1,11 @@
-﻿
-using Kinematik.Application.Ports;
+﻿using Kinematik.Application.Ports;
 using Kinematik.EntityFramework;
 
 using MediatR;
 
 using Microsoft.EntityFrameworkCore;
 
-namespace Kinematik.Application.Queries.Admin
+namespace Kinematik.Application.Queries.Admin.Films
 {
     public class GetFilmsListQueryInput : IRequest<GetFilmsListQueryOutput>
     {

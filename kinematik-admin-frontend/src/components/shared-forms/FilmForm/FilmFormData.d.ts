@@ -4,7 +4,7 @@ export default interface FilmFormData {
   posterUrl: string | null;
   description: string | null;
   genreIDs: number[] | null;
-  language: string | null;
+  languageID: number | null;
   runtime: number | null;
   imdbID: string | null;
   trailerUrl: string | null;

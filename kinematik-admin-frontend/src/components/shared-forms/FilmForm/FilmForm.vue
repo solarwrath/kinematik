@@ -25,14 +25,11 @@
     </b-form-group>
 
     <b-form-group label="Жанри:">
-      <b-form-select v-model="formData.genreIDs" :options="genresPool" multiple> </b-form-select>
+      <b-form-select v-model="formData.genreIDs" :options="genresPool" multiple></b-form-select>
     </b-form-group>
 
     <b-form-group label="Мова:">
-      <b-form-select v-model="formData.language">
-        <b-form-select-option value="ukrainian">Українська</b-form-select-option>
-        <b-form-select-option value="english">Англійська</b-form-select-option>
-      </b-form-select>
+      <b-form-select v-model="formData.languageID" :options="languagesPool"></b-form-select>
     </b-form-group>
 
     <b-form-group label="Тривалість:">
@@ -79,12 +76,19 @@ import Vue from 'vue';
 import { Fragment } from 'vue-fragment';
 
 import genres from '@/domain/genres';
+import languages from '@/domain/languages';
 import FilmFormData from '@/components/shared-forms/FilmForm/FilmFormData';
 
 const genresPool = Object.getOwnPropertyNames(genres).map((genreID) => {
   return {
     value: +genreID,
     text: genres[+genreID],
+  };
+});
+const languagesPool = Object.getOwnPropertyNames(languages).map((languageID) => {
+  return {
+    value: +languageID,
+    text: languages[+languageID],
   };
 });
 
@@ -102,6 +106,7 @@ export default Vue.extend({
   data() {
     return {
       genresPool,
+      languagesPool,
     };
   },
   methods: {

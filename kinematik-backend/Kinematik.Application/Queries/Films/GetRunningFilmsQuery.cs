@@ -6,7 +6,7 @@ using MediatR;
 
 using Microsoft.EntityFrameworkCore;
 
-namespace Kinematik.Application.Queries
+namespace Kinematik.Application.Queries.Films
 {
     public class GetPlayingFilmsQueryInput : IRequest<GetRunningFilmsQueryOutput>
     {
@@ -39,7 +39,7 @@ namespace Kinematik.Application.Queries
                 Title = unmappedFilm.Title,
                 PosterUrl = _fileStorageService.GetAccessingPath(unmappedFilm.PosterPath),
             });
-            
+
             return output;
         }
     }
@@ -52,7 +52,7 @@ namespace Kinematik.Application.Queries
         {
             public int ID { get; set; }
             public string Title { get; set; }
-            public string PosterUrl { get; set; }
+            public string? PosterUrl { get; set; }
         }
     }
 }
