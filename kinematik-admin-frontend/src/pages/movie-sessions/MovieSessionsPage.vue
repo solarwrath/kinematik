@@ -280,7 +280,7 @@ export default Vue.extend({
     const sessions = await this.getSessions();
     const ganntItems = composeGanntItems(sessions, filmColors, filmRegistry);
 
-    const periodStart = GSTC.api.date(null, true).startOf('day');
+    const periodStart = GSTC.api.date(null, true);
     this.periodStart = periodStart;
     const periodEnd = periodStart.add(2, 'week');
 
