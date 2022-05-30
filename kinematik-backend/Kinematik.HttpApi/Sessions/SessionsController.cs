@@ -1,7 +1,7 @@
-﻿using Kinematik.Application.Commands.Admin.Halls;
-using Kinematik.Application.Queries.Admin.Halls;
+﻿using Kinematik.Application.Commands.Admin.Sessions;
 using Kinematik.Application.Queries.Sessions;
 using Kinematik.HttpApi.Sessions.GetSessions;
+using Kinematik.HttpApi.Sessions.GetSessionsAvailableForBooking;
 using Kinematik.HttpApi.Sessions.UpdateAllSessions;
 
 using MediatR;
@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 
 using Swashbuckle.AspNetCore.Annotations;
 
-namespace Kinematik.HttpApi.Halls
+namespace Kinematik.HttpApi.Sessions
 {
     public class SessionsController : HttpApiControllerBase
     {
@@ -36,6 +36,35 @@ namespace Kinematik.HttpApi.Halls
                 ID = session.ID,
                 FilmID = session.FilmID,
                 HallID = session.HallID,
+                StartAt = session.StartAt,
+            });
+
+            return Ok(response);
+        }
+
+        [HttpGet]
+        [Route("available-for-booking/{filmID:int}")]
+        [SwaggerOperation(
+            Summary = "Повертає всі сеанси, на які можна взяти квиток на зазначений фільм"
+        )]
+        public async Task<ActionResult<GetSessionsAvailableForBookingResponse>> GetSessionsAvailableForBooking(
+            [FromRoute] int filmID,
+            CancellationToken cancellationToken = default
+        )
+        {
+            GetSessionsAvailableForBookingResponse response = new GetSessionsAvailableForBookingResponse();
+
+            GetSessionsAvailableForBookingQueryInput queryInput = new GetSessionsAvailableForBookingQueryInput
+            {
+                FilmID = filmID
+            };
+            GetSessionsAvailableForBookingQueryOutput queryOutput = await _mediator.Send(queryInput, cancellationToken);
+
+            response.Sessions = queryOutput.Sessions.Select(session => new GetSessionsAvailableForBookingMappedSession
+            {
+                ID = session.ID,
+                HallID = session.HallID,
+                HallTitle = session.HallTitle,
                 StartAt = session.StartAt,
             });
 

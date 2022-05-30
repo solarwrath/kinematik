@@ -47,16 +47,25 @@ export default Vue.extend({
   mounted: async function () {
     const response = await axios.get(`/halls/${this.hallID}`);
 
+    const groupedLayoutRows = _.groupBy(
+      response.data.layoutItems,
+      (layoutItem) => layoutItem.rowID
+    );
+
     this.initialHallFormData = {
       title: response.data.title,
+      layoutRows: Object.values(groupedLayoutRows),
     };
 
     this.currentHallFormData = _.cloneDeep(this.initialHallFormData);
   },
   methods: {
     updateHall() {
+      const layoutItems = this.currentHallFormData.layoutRows.flat();
+
       axios.put(`/halls/${this.hallID}`, {
         title: this.currentHallFormData.title,
+        layoutItems: layoutItems,
       });
     },
   },

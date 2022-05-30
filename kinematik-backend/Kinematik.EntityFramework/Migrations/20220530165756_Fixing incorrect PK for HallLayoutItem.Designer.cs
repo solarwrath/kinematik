@@ -4,6 +4,7 @@ using Kinematik.EntityFramework;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Kinematik.EntityFramework.Migrations
 {
     [DbContext(typeof(KinematikDbContext))]
-    partial class KinematikDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220530165756_Fixing incorrect PK for HallLayoutItem")]
+    partial class FixingincorrectPKforHallLayoutItem
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -145,3 +145,35 @@
     gap: 2rem;
     flex-basis: 100%;
 }
+
+.hall-layout {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+
+    & .hall-layout-row {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+
+        & .hall-layout-item {
+            --hall-item-base-width: 3em;
+            width: calc(
+                var(--hall-item-relative-width, 1) * var(--hall-item-base-width)
+            );
+            height: 3em;
+
+            &.hall-item-common {
+                border: 1px solid red;
+            }
+            &.hall-item-vip {
+                border: 1px solid blue;
+            }
+            &.hall-item-couch {
+                border: 1px solid green;
+            }
+        }
+    }
+}

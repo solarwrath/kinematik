@@ -33,6 +33,7 @@ export default Vue.extend({
     return {
       hallFormData: {
         title: '',
+        layoutRows: [],
       } as HallFormData,
     };
   },
@@ -40,6 +41,7 @@ export default Vue.extend({
     addHall() {
       axios.post('/halls', {
         title: this.hallFormData.title,
+        layoutItems: this.hallFormData.layoutRows.flat(),
       });
     },
   },

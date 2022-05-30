@@ -1,5 +1,7 @@
 ﻿using Kinematik.Application.Commands.Admin.Halls;
 using Kinematik.Application.Queries.Admin.Halls;
+using Kinematik.Domain.Entities;
+using Kinematik.HttpApi.Halls.CreateHall;
 using Kinematik.HttpApi.Halls.GetHall;
 using Kinematik.HttpApi.Halls.GetHallsList;
 using Kinematik.HttpApi.Halls.UpdateHall;
@@ -57,9 +59,15 @@ namespace Kinematik.HttpApi.Halls
             {
                 HallID = hallID
             };
-            GetHallQueryOutput queryOutput =  await _mediator.Send(queryInput, cancellationToken);
+            GetHallQueryOutput queryOutput = await _mediator.Send(queryInput, cancellationToken);
 
             response.Title = queryOutput.Title;
+            response.LayoutItems = queryOutput.LayoutItems.Select(rawLayoutItem => new GetHallResponseLayoutItem
+            {
+                RowID = rawLayoutItem.RowID,
+                ColumnID = rawLayoutItem.ColumnID,
+                TypeID = (int)rawLayoutItem.Type
+            });
 
             return Ok(response);
         }
@@ -69,13 +77,19 @@ namespace Kinematik.HttpApi.Halls
             Summary = "Створює залу"
         )]
         public async Task<ActionResult<int>> CreateHall(
-            [FromBody] UpdateHallRequest incomingRequest,
+            [FromBody] CreateHallRequest incomingRequest,
             CancellationToken cancellationToken = default
         )
         {
             CreateHallCommandInput commandInput = new CreateHallCommandInput
             {
-                Title = incomingRequest.Title
+                Title = incomingRequest.Title,
+                LayoutItems = incomingRequest.LayoutItems.Select(rawLayoutItem => new CreateHallCommandInput.LayoutItem
+                {
+                    RowID = rawLayoutItem.RowID,
+                    ColumnID = rawLayoutItem.ColumnID,
+                    Type = (HallLayoutItemType)rawLayoutItem.TypeID
+                })
             };
 
             int createdHallID = await _mediator.Send(commandInput, cancellationToken);
@@ -97,7 +111,13 @@ namespace Kinematik.HttpApi.Halls
             UpdateHallCommandInput commandInput = new UpdateHallCommandInput
             {
                 HallID = hallID,
-                UpdatedTitle = incomingRequest.Title
+                UpdatedTitle = incomingRequest.Title,
+                UpdatedLayoutItems = incomingRequest.LayoutItems.Select(rawLayoutItem => new UpdateHallCommandInput.LayoutItem
+                {
+                    RowID = rawLayoutItem.RowID,
+                    ColumnID = rawLayoutItem.ColumnID,
+                    Type = (HallLayoutItemType)rawLayoutItem.TypeID
+                })
             };
 
             await _mediator.Send(commandInput, cancellationToken);

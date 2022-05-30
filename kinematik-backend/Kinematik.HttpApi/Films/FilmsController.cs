@@ -3,6 +3,7 @@ using Kinematik.Application.Queries.Admin.Films;
 using Kinematik.Application.Queries.Films;
 using Kinematik.Domain.Entities;
 using Kinematik.HttpApi.Films.Admin.CreateFilm;
+using Kinematik.HttpApi.Films.Admin.GetFilmsForAssigningSessions;
 using Kinematik.HttpApi.Films.Admin.GetFilmsList;
 using Kinematik.HttpApi.Films.Admin.GetFullFilmData;
 using Kinematik.HttpApi.Films.Admin.UpdateFilm;
@@ -242,6 +243,28 @@ namespace Kinematik.HttpApi.Films
                 Rating = queryOutput.Rating,
                 TrailerUrl = queryOutput.TrailerUrl,
                 FeaturedImageUrl = queryOutput.FeaturedImageUrl
+            };
+
+            return Ok(response);
+        }
+
+        [HttpGet]
+        [Route("available-for-session-assigning")]
+        [SwaggerOperation(
+            Summary = "Повертає список фільмів пригодних для призначення сеансів"
+        )]
+        public async Task<ActionResult<GetFilmsForAssigningSessionsResponse>> GetFilmsForAssigningSessions(CancellationToken cancellationToken = default)
+        {
+            GetFilmsForAssigningSessionsQueryOutput queryOutput = await _mediator.Send(new GetFilmsForAssigningSessionsQueryInput(), cancellationToken);
+
+            GetFilmsForAssigningSessionsResponse response = new GetFilmsForAssigningSessionsResponse
+            {
+                Films = queryOutput.Films.Select(originalFilm => new GetFilmsForAssigningSessionsResponseMappedFilm
+                {
+                    ID = originalFilm.ID,
+                    Title = originalFilm.Title,
+                    Runtime = originalFilm.Runtime
+                })
             };
 
             return Ok(response);

@@ -4,6 +4,7 @@ using Kinematik.EntityFramework;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Kinematik.EntityFramework.Migrations
 {
     [DbContext(typeof(KinematikDbContext))]
-    partial class KinematikDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220529182950_Added HallLayout")]
+    partial class AddedHallLayout
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -119,19 +121,21 @@ namespace Kinematik.EntityFramework.Migrations
 
             modelBuilder.Entity("Kinematik.Domain.Entities.HallLayoutItem", b =>
                 {
-                    b.Property<int>("HallID")
-                        .HasColumnType("int");
-
                     b.Property<int>("RowID")
                         .HasColumnType("int");
 
-                    b.Property<int>("ColumnID")
+                    b.Property<int>("ColID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("HallID")
                         .HasColumnType("int");
 
                     b.Property<int>("Type")
                         .HasColumnType("int");
 
-                    b.HasKey("HallID", "RowID", "ColumnID");
+                    b.HasKey("RowID", "ColID");
+
+                    b.HasIndex("HallID");
 
                     b.ToTable("HallLayoutItems");
                 });
@@ -212,7 +216,7 @@ namespace Kinematik.EntityFramework.Migrations
             modelBuilder.Entity("Kinematik.Domain.Entities.HallLayoutItem", b =>
                 {
                     b.HasOne("Kinematik.Domain.Entities.Hall", "Hall")
-                        .WithMany("LayoutItems")
+                        .WithMany("HallLayoutItems")
                         .HasForeignKey("HallID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -251,7 +255,7 @@ namespace Kinematik.EntityFramework.Migrations
 
             modelBuilder.Entity("Kinematik.Domain.Entities.Hall", b =>
                 {
-                    b.Navigation("LayoutItems");
+                    b.Navigation("HallLayoutItems");
 
                     b.Navigation("Sessions");
                 });

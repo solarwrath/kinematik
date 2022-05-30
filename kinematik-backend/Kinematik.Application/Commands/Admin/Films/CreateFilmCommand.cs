@@ -53,7 +53,7 @@ namespace Kinematik.Application.Commands.Admin.Films
                     Film = createdFilm,
                     GenreID = filmGenreId
                 })
-                .ToArray();
+                .ToList();
 
 
             _dbContext.Add(createdFilm);

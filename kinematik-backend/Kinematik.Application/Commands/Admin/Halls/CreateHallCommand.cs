@@ -8,6 +8,14 @@ namespace Kinematik.Application.Commands.Admin.Halls
     public class CreateHallCommandInput : IRequest<int>
     {
         public string Title { get; set; }
+        public IEnumerable<LayoutItem> LayoutItems { get; set; }
+
+        public class LayoutItem
+        {
+            public int RowID { get; set; }
+            public int ColumnID { get; set; }
+            public HallLayoutItemType Type { get; set; }
+        }
     }
 
     public class CreateHallCommandHandler : IRequestHandler<CreateHallCommandInput, int>
@@ -25,7 +33,15 @@ namespace Kinematik.Application.Commands.Admin.Halls
         {
             Hall createdHall = new Hall
             {
-                Title = input.Title
+                Title = input.Title,
+                LayoutItems = input.LayoutItems
+                    .Select(rawLayoutItem => new HallLayoutItem
+                    {
+                        RowID = rawLayoutItem.RowID,
+                        ColumnID = rawLayoutItem.ColumnID,
+                        Type = rawLayoutItem.Type
+                    })
+                    .ToList()
             };
 
             _dbContext.Add(createdHall);

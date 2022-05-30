@@ -2,6 +2,7 @@
 using Kinematik.EntityFramework;
 
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Kinematik.Application.Commands.Admin.Halls
 {
@@ -9,6 +10,14 @@ namespace Kinematik.Application.Commands.Admin.Halls
     {
         public int HallID { get; set; }
         public string UpdatedTitle { get; set; }
+        public IEnumerable<UpdateHallCommandInput.LayoutItem> UpdatedLayoutItems { get; set; }
+
+        public class LayoutItem
+        {
+            public int RowID { get; set; }
+            public int ColumnID { get; set; }
+            public HallLayoutItemType Type { get; set; }
+        }
     }
 
     public class UpdateHallCommandHandler : IRequestHandler<UpdateHallCommandInput>
@@ -24,9 +33,23 @@ namespace Kinematik.Application.Commands.Admin.Halls
 
         public async Task<Unit> Handle(UpdateHallCommandInput input, CancellationToken cancellationToken)
         {
-            Hall? hall = await _dbContext.Halls.FindAsync(new object[] { input.HallID }, cancellationToken);
+            Hall? hall = await _dbContext.Halls
+                .Where(hall => hall.ID == input.HallID)
+                .Include(hall => hall.LayoutItems)
+                .SingleOrDefaultAsync(cancellationToken);
+
             hall.Title = input.UpdatedTitle;
-            
+
+            _dbContext.HallLayoutItems.RemoveRange(hall.LayoutItems);
+            hall.LayoutItems = input.UpdatedLayoutItems
+                .Select(rawLayoutItem => new HallLayoutItem
+                {
+                    RowID = rawLayoutItem.RowID,
+                    ColumnID = rawLayoutItem.ColumnID,
+                    Type = rawLayoutItem.Type
+                })
+                .ToList();
+
             await _dbContext.SaveChangesAsync(cancellationToken);
 
             return Unit.Value;

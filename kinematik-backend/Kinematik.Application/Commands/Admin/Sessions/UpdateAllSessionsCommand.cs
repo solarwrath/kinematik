@@ -3,7 +3,7 @@ using Kinematik.EntityFramework;
 
 using MediatR;
 
-namespace Kinematik.Application.Commands.Admin.Halls
+namespace Kinematik.Application.Commands.Admin.Sessions
 {
     public class UpdateAllSessionsCommandInput : IRequest
     {
