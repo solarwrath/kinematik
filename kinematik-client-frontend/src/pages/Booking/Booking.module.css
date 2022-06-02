@@ -110,6 +110,7 @@
 
 .seat-choosing-area {
     border-top: 10px solid yellow;
+    padding-top: 15px;
 }
 
 .sidebar-card {
@@ -153,26 +154,33 @@
     justify-content: center;
     align-items: center;
 
+    --default-layout-gap: 1.5rem;
+    gap: var(--default-layout-gap);
+
     & .hall-layout-row {
         display: flex;
         flex-direction: row;
         flex-wrap: nowrap;
 
+        gap: var(--default-layout-gap);
+
         & .hall-layout-item {
             --hall-item-base-width: 3em;
-            width: calc(
-                var(--hall-item-relative-width, 1) * var(--hall-item-base-width)
-            );
+            width: calc(var(--hall-item-relative-width, 1) * var(--hall-item-base-width));
             height: 3em;
 
-            &.hall-item-common {
-                border: 1px solid red;
+            & svg {
+                fill: var(--fill-color);
             }
-            &.hall-item-vip {
-                border: 1px solid blue;
+
+            &.hall-item-free {
+                --fill-color: var(--light-color);
             }
-            &.hall-item-couch {
-                border: 1px solid green;
+            &.hall-item-selected {
+                --fill-color: yellow;
+            }
+            &.hall-item-booked {
+                --fill-color: grey;
             }
         }
     }

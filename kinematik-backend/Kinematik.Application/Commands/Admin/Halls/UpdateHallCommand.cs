@@ -16,7 +16,7 @@ namespace Kinematik.Application.Commands.Admin.Halls
         {
             public int RowID { get; set; }
             public int ColumnID { get; set; }
-            public HallLayoutItemType Type { get; set; }
+            public SeatType SeatType { get; set; }
         }
     }
 
@@ -46,7 +46,7 @@ namespace Kinematik.Application.Commands.Admin.Halls
                 {
                     RowID = rawLayoutItem.RowID,
                     ColumnID = rawLayoutItem.ColumnID,
-                    Type = rawLayoutItem.Type
+                    SeatType = rawLayoutItem.SeatType
                 })
                 .ToList();
 

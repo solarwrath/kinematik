@@ -36,7 +36,7 @@ namespace Kinematik.Application.Queries.Admin.Halls
                         {
                             RowID = hallLayoutItem.RowID,
                             ColumnID = hallLayoutItem.ColumnID,
-                            Type = hallLayoutItem.Type,
+                            SeatType = hallLayoutItem.SeatType,
                         })
                     })
                 .SingleOrDefaultAsync(cancellationToken);
@@ -57,7 +57,7 @@ namespace Kinematik.Application.Queries.Admin.Halls
         {
             public int RowID { get; set; }
             public int ColumnID { get; set; }
-            public HallLayoutItemType Type { get; set; }
+            public SeatType SeatType { get; set; }
         }
     }
 }

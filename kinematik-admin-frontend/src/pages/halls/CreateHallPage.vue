@@ -41,7 +41,13 @@ export default Vue.extend({
     addHall() {
       axios.post('/halls', {
         title: this.hallFormData.title,
-        layoutItems: this.hallFormData.layoutRows.flat(),
+        layoutItems: this.hallFormData.layoutRows.flat().map((rawLayoutItem) => {
+          return {
+            rowID: rawLayoutItem.rowID,
+            columnID: rawLayoutItem.columnID,
+            seatTypeID: rawLayoutItem.seatType,
+          };
+        }),
       });
     },
   },

@@ -30,7 +30,7 @@ import axios from 'axios';
 import _ from 'lodash';
 
 import HallForm from '@/components/shared-forms/HallForm/HallForm.vue';
-import HallFormData from '@/components/shared-forms/HallForm/HallFormData';
+import HallFormData, { SeatType } from '@/components/shared-forms/HallForm/HallFormData';
 
 export default Vue.extend({
   name: 'EditHallPage',
@@ -47,10 +47,14 @@ export default Vue.extend({
   mounted: async function () {
     const response = await axios.get(`/halls/${this.hallID}`);
 
-    const groupedLayoutRows = _.groupBy(
-      response.data.layoutItems,
-      (layoutItem) => layoutItem.rowID
-    );
+    const mappedLayoutItems = response.data.layoutItems.map((rawLayoutItem) => {
+      return {
+        rowID: rawLayoutItem.rowID,
+        columnID: rawLayoutItem.columnID,
+        seatType: rawLayoutItem.seatTypeID as SeatType,
+      };
+    });
+    const groupedLayoutRows = _.groupBy(mappedLayoutItems, (layoutItem) => layoutItem.rowID);
 
     this.initialHallFormData = {
       title: response.data.title,
@@ -61,7 +65,13 @@ export default Vue.extend({
   },
   methods: {
     updateHall() {
-      const layoutItems = this.currentHallFormData.layoutRows.flat();
+      const layoutItems = this.currentHallFormData.layoutRows.flat().map((rawLayoutItem) => {
+        return {
+          rowID: rawLayoutItem.rowID,
+          columnID: rawLayoutItem.columnID,
+          seatTypeID: rawLayoutItem.seatType,
+        };
+      });
 
       axios.put(`/halls/${this.hallID}`, {
         title: this.currentHallFormData.title,

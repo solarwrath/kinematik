@@ -4,6 +4,7 @@ using Kinematik.EntityFramework;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Kinematik.EntityFramework.Migrations
 {
     [DbContext(typeof(KinematikDbContext))]
-    partial class KinematikDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220530180227_Renamed HallLayoutItemType to SeatType")]
+    partial class RenamedHallLayoutItemTypetoSeatType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,56 +23,6 @@ namespace Kinematik.EntityFramework.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
-
-            modelBuilder.Entity("Kinematik.Domain.Entities.BookedSeat", b =>
-                {
-                    b.Property<int>("SessionID")
-                        .HasColumnType("int");
-
-                    b.Property<int>("RowID")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ColumnID")
-                        .HasColumnType("int");
-
-                    b.Property<int>("BookingID")
-                        .HasColumnType("int");
-
-                    b.HasKey("SessionID", "RowID", "ColumnID");
-
-                    b.HasIndex("BookingID");
-
-                    b.ToTable("BookedSeats");
-                });
-
-            modelBuilder.Entity("Kinematik.Domain.Entities.Booking", b =>
-                {
-                    b.Property<int>("ID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"), 1L, 1);
-
-                    b.Property<DateTime>("BookedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ClientEmail")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ClientPhone")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("SessionID")
-                        .HasColumnType("int");
-
-                    b.HasKey("ID");
-
-                    b.HasIndex("SessionID");
-
-                    b.ToTable("Bookings");
-                });
 
             modelBuilder.Entity("Kinematik.Domain.Entities.Film", b =>
                 {
@@ -231,28 +183,6 @@ namespace Kinematik.EntityFramework.Migrations
                     b.ToTable("Sessions");
                 });
 
-            modelBuilder.Entity("Kinematik.Domain.Entities.BookedSeat", b =>
-                {
-                    b.HasOne("Kinematik.Domain.Entities.Booking", "Booking")
-                        .WithMany("BookedSeats")
-                        .HasForeignKey("BookingID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Booking");
-                });
-
-            modelBuilder.Entity("Kinematik.Domain.Entities.Booking", b =>
-                {
-                    b.HasOne("Kinematik.Domain.Entities.Session", "Session")
-                        .WithMany()
-                        .HasForeignKey("SessionID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Session");
-                });
-
             modelBuilder.Entity("Kinematik.Domain.Entities.Film", b =>
                 {
                     b.HasOne("Kinematik.Domain.Entities.Language", "Language")
@@ -307,11 +237,6 @@ namespace Kinematik.EntityFramework.Migrations
                     b.Navigation("Film");
 
                     b.Navigation("Hall");
-                });
-
-            modelBuilder.Entity("Kinematik.Domain.Entities.Booking", b =>
-                {
-                    b.Navigation("BookedSeats");
                 });
 
             modelBuilder.Entity("Kinematik.Domain.Entities.Film", b =>

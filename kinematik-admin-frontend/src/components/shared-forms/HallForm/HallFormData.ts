@@ -6,10 +6,10 @@ export default interface HallFormData {
 export interface HallLayoutItem {
   rowID: number;
   columnID: number;
-  typeID: HallLayoutItemType;
+  seatType: SeatType;
 }
 
-export enum HallLayoutItemType {
+export enum SeatType {
   EMPTY = 0,
   COMMON = 1,
   VIP = 2,

@@ -1,6 +1,6 @@
 ﻿namespace Kinematik.Domain.Entities
 {
-    public enum HallLayoutItemType
+    public enum SeatType
     {
         EMPTY = 0,
         COMMON = 1,

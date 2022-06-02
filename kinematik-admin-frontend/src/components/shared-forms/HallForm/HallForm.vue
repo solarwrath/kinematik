@@ -21,20 +21,20 @@
         >
           <div
             v-for="layoutItem in layoutRow"
-            v-on:click="changeLayoutItemType(layoutItem)"
+            v-on:click="changeSeatType(layoutItem)"
             class="hall-layout-item"
-            :class="getHallItemTypeClass(layoutItem.typeID)"
-            :style="`--hall-item-relative-width: ${widthRegistry[layoutItem.typeID]};`"
+            :class="getSeatTypeClass(layoutItem.seatType)"
+            :style="`--hall-item-relative-width: ${widthRegistry[layoutItem.seatType]};`"
             role="button"
-            :key="`${layoutItem.rowID}_${layoutItem.columnID}}`"
+            :key="`${layoutItem.rowID}_${layoutItem.columnID}`"
           >
-            <template v-if="layoutItem.typeID === hallItemTypes.COMMON">
+            <template v-if="layoutItem.seatType === seatTypes.COMMON">
               <img svg-inline class="icon" src="@/assets/seat.svg" />
             </template>
-            <template v-else-if="layoutItem.typeID === hallItemTypes.VIP">
+            <template v-else-if="layoutItem.seatType === seatTypes.VIP">
               <img svg-inline class="icon" src="@/assets/seat.svg" />
             </template>
-            <template v-else-if="layoutItem.typeID === hallItemTypes.COUCH">
+            <template v-else-if="layoutItem.seatType === seatTypes.COUCH">
               <img svg-inline class="icon" src="@/assets/couch.svg" />
             </template>
           </div>
@@ -52,7 +52,7 @@ import { tap, cloneDeep } from 'lodash';
 
 import HallFormData, {
   HallLayoutItem,
-  HallLayoutItemType,
+  SeatType,
 } from '@/components/shared-forms/HallForm/HallFormData';
 
 function generateLayoutRows(rowCount: number, colCount: number): HallLayoutItem[][] {
@@ -70,7 +70,7 @@ function generateLayoutColumns(colCount: number, rowID: number, startingColumnID
       return {
         rowID: rowID,
         columnID: startingColumnID + columnID,
-        typeID: HallLayoutItemType.EMPTY,
+        seatType: SeatType.EMPTY,
       };
     });
 }
@@ -97,15 +97,15 @@ export default Vue.extend({
       colCount: DEFAULT_COL_COUNT,
 
       widthRegistry: {
-        [HallLayoutItemType.EMPTY]: 1,
-        [HallLayoutItemType.COMMON]: 1,
-        [HallLayoutItemType.VIP]: 1,
-        [HallLayoutItemType.COUCH]: 2,
+        [SeatType.EMPTY]: 1,
+        [SeatType.COMMON]: 1,
+        [SeatType.VIP]: 1,
+        [SeatType.COUCH]: 2,
       },
-      hallItemTypes: {
-        COMMON: HallLayoutItemType.COMMON,
-        VIP: HallLayoutItemType.VIP,
-        COUCH: HallLayoutItemType.COUCH,
+      seatTypes: {
+        COMMON: SeatType.COMMON,
+        VIP: SeatType.VIP,
+        COUCH: SeatType.COUCH,
       },
     };
   },
@@ -174,35 +174,35 @@ export default Vue.extend({
       this.refreshBinding();
     },
 
-    changeLayoutItemType(layoutItem: HallLayoutItem) {
-      switch (layoutItem.typeID) {
-        case HallLayoutItemType.EMPTY:
-          layoutItem.typeID = HallLayoutItemType.COMMON;
+    changeSeatType(layoutItem: HallLayoutItem) {
+      switch (layoutItem.seatType) {
+        case SeatType.EMPTY:
+          layoutItem.seatType = SeatType.COMMON;
           break;
-        case HallLayoutItemType.COMMON:
-          layoutItem.typeID = HallLayoutItemType.VIP;
+        case SeatType.COMMON:
+          layoutItem.seatType = SeatType.VIP;
           break;
-        case HallLayoutItemType.VIP:
-          layoutItem.typeID = HallLayoutItemType.COUCH;
+        case SeatType.VIP:
+          layoutItem.seatType = SeatType.COUCH;
           break;
-        case HallLayoutItemType.COUCH:
-          layoutItem.typeID = HallLayoutItemType.EMPTY;
+        case SeatType.COUCH:
+          layoutItem.seatType = SeatType.EMPTY;
           break;
       }
       this.refreshBinding();
     },
-    isEmptyHallItem(itemType: HallLayoutItemType) {
-      return itemType === HallLayoutItemType.EMPTY;
+    isEmptySeat(seatType: SeatType) {
+      return seatType === SeatType.EMPTY;
     },
-    getHallItemTypeClass(itemType: HallLayoutItemType) {
-      switch (itemType) {
-        case HallLayoutItemType.COMMON:
+    getSeatTypeClass(seatType: SeatType) {
+      switch (seatType) {
+        case SeatType.COMMON:
           return 'hall-item-common';
-        case HallLayoutItemType.VIP:
+        case SeatType.VIP:
           return 'hall-item-vip';
-        case HallLayoutItemType.COUCH:
+        case SeatType.COUCH:
           return 'hall-item-couch';
-        case HallLayoutItemType.EMPTY:
+        case SeatType.EMPTY:
         default:
           return 'hall-item-empty';
       }
@@ -219,7 +219,7 @@ export default Vue.extend({
   justify-content: center;
   align-items: center;
 
-  --default-layout-gap: 0.5rem;
+  --default-layout-gap: 1.5rem;
   gap: var(--default-layout-gap);
 
   & .hall-layout-row {

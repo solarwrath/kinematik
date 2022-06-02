@@ -7,6 +7,6 @@
 
         public int RowID { get; set; }
         public int ColumnID { get; set; }
-        public HallLayoutItemType Type { get; set; }
+        public SeatType SeatType { get; set; }
     }
 }

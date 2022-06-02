@@ -66,7 +66,7 @@ namespace Kinematik.HttpApi.Halls
             {
                 RowID = rawLayoutItem.RowID,
                 ColumnID = rawLayoutItem.ColumnID,
-                TypeID = (int)rawLayoutItem.Type
+                SeatTypeID = (int)rawLayoutItem.SeatType
             });
 
             return Ok(response);
@@ -88,7 +88,7 @@ namespace Kinematik.HttpApi.Halls
                 {
                     RowID = rawLayoutItem.RowID,
                     ColumnID = rawLayoutItem.ColumnID,
-                    Type = (HallLayoutItemType)rawLayoutItem.TypeID
+                    SeatType = (SeatType)rawLayoutItem.SeatTypeID
                 })
             };
 
@@ -116,7 +116,7 @@ namespace Kinematik.HttpApi.Halls
                 {
                     RowID = rawLayoutItem.RowID,
                     ColumnID = rawLayoutItem.ColumnID,
-                    Type = (HallLayoutItemType)rawLayoutItem.TypeID
+                    SeatType = (SeatType)rawLayoutItem.SeatTypeID
                 })
             };
 

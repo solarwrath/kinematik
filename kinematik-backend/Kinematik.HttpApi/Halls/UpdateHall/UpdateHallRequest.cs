@@ -10,6 +10,6 @@
     {
         public int RowID { get; set; }
         public int ColumnID { get; set; }
-        public int TypeID { get; set; }
+        public int SeatTypeID { get; set; }
     }
 }

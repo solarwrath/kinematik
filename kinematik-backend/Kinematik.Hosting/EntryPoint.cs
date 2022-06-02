@@ -46,6 +46,7 @@ void ConfigureServices(IServiceCollection services, ConfigurationManager configu
     services.AddDbContext<KinematikDbContext>(options =>
     {
         options.UseSqlServer(Environment.GetEnvironmentVariable("KINEMATIK_CONNECTION_STRING")!);
+        options.EnableSensitiveDataLogging();
     });
     services.AddDatabaseDeveloperPageExceptionFilter();
 

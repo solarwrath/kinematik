@@ -5,91 +5,31 @@ import { useParams } from 'react-router-dom';
 
 import axios from 'axios';
 
-import { format, isEqual } from 'date-fns';
+import { format } from 'date-fns';
 import { uk } from 'date-fns/locale';
 
-import { capitalize } from 'lodash';
+import { capitalize, groupBy } from 'lodash';
 import classNames from 'classnames';
 
-import GeneratedTicketDetail from './GeneratedTicketDetail';
-import Button from '../../components/Button/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 
-interface HallLayout {
-    id: number;
-    title: string;
-    layoutRows: HallLayoutRow[];
+import Button from '../../components/Button/Button';
+import { SeatType, widthRegistry } from '../../domain/hallLayout';
+
+import GeneratedTicketDetail from './GeneratedTicketDetail';
+import { ReactComponent as SeatIcon } from '../../assets/seat.svg';
+import { ReactComponent as CouchIcon } from '../../assets/couch.svg';
+import { SeatStatus } from './Booking.';
+
+async function getFilmTitle(filmID: number) {
+    const response = await axios.get(`${window.apiBaseUrl}/films/${filmID}/details`);
+
+    return response.data.title;
 }
 
-interface HallLayoutRow {
-    id: number;
-    layoutItems: HallLayoutItem[];
-}
-
-interface HallLayoutItem {
-    rowID: number;
-    colID: number;
-    type: HallLayoutItemType;
-}
-
-enum HallLayoutItemType {
-    EMPTY = 0,
-    COMMON = 1,
-    VIP = 2,
-    COUCH = 3,
-}
-
-const widthRegistry = {
-    [HallLayoutItemType.EMPTY]: 1,
-    [HallLayoutItemType.COMMON]: 1,
-    [HallLayoutItemType.VIP]: 1,
-    [HallLayoutItemType.COUCH]: 2,
-};
-
-function getHallLayout() {
-    const layout: HallLayout = {
-        id: 1,
-        title: 'A',
-        layoutRows: generateLayoutRows(),
-    };
-
-    return layout;
-}
-
-function generateLayoutRows(): HallLayoutRow[] {
-    const empty = HallLayoutItemType.EMPTY;
-    const common = HallLayoutItemType.COMMON;
-    const vip = HallLayoutItemType.VIP;
-    const couch = HallLayoutItemType.COUCH;
-
-    // prettier-ignore
-    const simplifiedRows = [
-        [empty, common, common, common, common, empty],
-        [empty, empty , vip   , vip   , empty , empty],
-        [empty, empty , couch         , empty , empty]
-    ]
-
-    const rows: HallLayoutRow[] = simplifiedRows.map((row, rowID) => {
-        return {
-            id: rowID,
-            layoutItems: row.map((item, colID) => {
-                return {
-                    rowID: rowID,
-                    colID: colID,
-                    type: item,
-                };
-            }),
-        };
-    });
-
-    return rows;
-}
-
-async function getAvailableForBookingSessions(filmID) {
-    const response = await axios.get(
-        `${window.apiBaseUrl}/sessions/available-for-booking/${filmID}`
-    );
+async function getAvailableForBookingSessions(filmID: number) {
+    const response = await axios.get(`${window.apiBaseUrl}/sessions/available-for-booking/${filmID}`);
 
     return response.data.sessions.map((session) => {
         return {
@@ -97,6 +37,25 @@ async function getAvailableForBookingSessions(filmID) {
             startAt: new Date(session.startAt),
         };
     });
+}
+
+async function getBookingStatuses(sessionID: number) {
+    const response = await axios.get(`${window.apiBaseUrl}/bookings/${sessionID}`);
+
+    return response.data.bookingStatuses.map((rawLayoutItem) => {
+        return {
+            rowID: rawLayoutItem.rowID,
+            columnID: rawLayoutItem.columnID,
+            seatType: rawLayoutItem.seatTypeID as SeatType,
+            seatStatus: rawLayoutItem.isFree ? SeatStatus.FREE : SeatStatus.BOOKED,
+        };
+    });
+}
+
+function splitBookingStatusesIntoLayoutRows(bookingStatuses) {
+    const groupedLayoutRows = groupBy(bookingStatuses, (bookingStatus) => bookingStatus.rowID);
+
+    return Object.values(groupedLayoutRows);
 }
 
 function computeSessionTimeHierarchy(sessions) {
@@ -121,6 +80,7 @@ function computeSessionTimeHierarchy(sessions) {
         const correspondingDate = correpondingMonth[date];
 
         correspondingDate.push({
+            sessionID: session.id,
             startAt: session.startAt,
             hallID: session.hallID,
             hallTitle: session.hallTitle,
@@ -133,53 +93,116 @@ function computeSessionTimeHierarchy(sessions) {
 function computeAvailableDates(sessionTimeHierarchy) {
     return Object.keys(sessionTimeHierarchy).flatMap((year) => {
         return Object.keys(sessionTimeHierarchy[year]).flatMap((month) => {
-            return Object.keys(sessionTimeHierarchy[year][month]).flatMap(
-                (date) => {
-                    return {
-                        date: new Date(year, month, date),
-                        availableTimes: sessionTimeHierarchy[year][month][date],
-                    };
-                }
-            );
+            return Object.keys(sessionTimeHierarchy[year][month]).flatMap((date) => {
+                return {
+                    date: new Date(year, month, date),
+                    availableTimes: sessionTimeHierarchy[year][month][date],
+                };
+            });
         });
     });
 }
 
-function getHallItemTypeClass(itemType: HallLayoutItemType) {
-    switch (itemType) {
-        case HallLayoutItemType.COMMON:
-            return classes['hall-item-common'];
-        case HallLayoutItemType.VIP:
-            return classes['hall-item-vip'];
-        case HallLayoutItemType.COUCH:
-            return classes['hall-item-couch'];
-        case HallLayoutItemType.EMPTY:
+function getHallItemTypeClasses(seat) {
+    const hallItemTypeClasses = [];
+
+    switch (seat.seatType) {
+        case SeatType.COMMON:
+            hallItemTypeClasses.push(classes['hall-item-common']);
+            break;
+        case SeatType.VIP:
+            hallItemTypeClasses.push(classes['hall-item-vip']);
+            break;
+        case SeatType.COUCH:
+            hallItemTypeClasses.push(classes['hall-item-couch']);
+            break;
+        case SeatType.EMPTY:
         default:
-            return classes['hall-item-empty'];
+            hallItemTypeClasses.push(classes['hall-item-empty']);
+            break;
     }
+
+    if (seat.seatStatus === SeatStatus.FREE) {
+        hallItemTypeClasses.push(classes['hall-item-free']);
+    } else if (seat.seatStatus === SeatStatus.SELECTED) {
+        hallItemTypeClasses.push(classes['hall-item-selected']);
+    } else if (seat.seatStatus === SeatStatus.BOOKED) {
+        hallItemTypeClasses.push(classes['hall-item-booked']);
+    }
+
+    return classNames(hallItemTypeClasses);
+}
+
+function getSeatTypeIcon(seatType: SeatType) {
+    switch (seatType) {
+        case SeatType.COMMON:
+        case SeatType.VIP:
+            return <SeatIcon />;
+        case SeatType.COUCH:
+            return <CouchIcon />;
+    }
+}
+
+async function bookTicket(sesssionID: number, selectedSeatsIDs: any[]) {
+    const request = {
+        seatsCoordinates: selectedSeatsIDs.map((selectedSeat) => {
+            return {
+                rowID: selectedSeat.rowID,
+                columnID: selectedSeat.columnID,
+            };
+        }),
+        sessionID: sesssionID,
+        clientEmail: 'anton.zhluktarov@gmail.com',
+        clientPhone: '+12302032030',
+    };
+    const response = await axios.put(`${window.apiBaseUrl}/bookings`, request);
 }
 
 const Booking = (props) => {
     const params = useParams();
 
-    const title = 'Spider-Man: No Way Home';
+    const [filmTitle, setFilmTitle] = useState();
     const [availableDates, setAvailableDates] = useState([]);
     const [selectedDate, setSelectedDate] = useState(null);
     const [selectedTime, setSelectedTime] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
 
-    const layout = getHallLayout();
+    const [layoutRows, setLayoutRows] = useState([]);
+    const [selectedSeats, setSelectedSeats] = useState([]);
+
+    function onSeatClick(seat) {
+        let newSelectedItems = null;
+
+        if (seat.seatStatus === SeatStatus.FREE) {
+            seat.seatStatus = SeatStatus.SELECTED;
+            newSelectedItems = [...selectedSeats, seat];
+        } else if (seat.seatStatus !== SeatStatus.BOOKED) {
+            seat.seatStatus = SeatStatus.FREE;
+            newSelectedItems = selectedSeats.filter((selectedSeat) => selectedSeat !== seat);
+        }
+
+        setSelectedSeats(newSelectedItems);
+    }
+
+    async function onBookTicketClick() {
+        const selectedSeatsIDs = selectedSeats.map((selectedSeat) => {
+            return {
+                rowID: selectedSeat.rowID,
+                columnID: selectedSeat.columnID,
+            };
+        });
+
+        await bookTicket(selectedTime.sessionID, selectedSeatsIDs);
+    }
 
     useEffect(async () => {
-        const fetchedAvailableSessions = await getAvailableForBookingSessions(
-            params.filmId
-        );
+        const fetchedFilmTitle = await getFilmTitle(params.filmId);
+        setFilmTitle(fetchedFilmTitle);
 
-        const sessionTimeHierarchy = computeSessionTimeHierarchy(
-            fetchedAvailableSessions
-        );
-        let computedAvailableDates =
-            computeAvailableDates(sessionTimeHierarchy);
+        const fetchedAvailableSessions = await getAvailableForBookingSessions(params.filmId);
+
+        const sessionTimeHierarchy = computeSessionTimeHierarchy(fetchedAvailableSessions);
+        let computedAvailableDates = computeAvailableDates(sessionTimeHierarchy);
         setAvailableDates(computedAvailableDates);
 
         if (computedAvailableDates && computedAvailableDates.length > 0) {
@@ -198,6 +221,15 @@ const Booking = (props) => {
         setIsLoading(false);
     }, []);
 
+    useEffect(async () => {
+        if (selectedTime !== null && selectedTime !== undefined) {
+            const bookingStatuses = await getBookingStatuses(selectedTime.sessionID);
+            const newLayoutRows = splitBookingStatusesIntoLayoutRows(bookingStatuses);
+
+            setLayoutRows(newLayoutRows);
+        }
+    }, [selectedTime]);
+
     if (isLoading) {
         return <div>Завантаження...</div>;
     }
@@ -209,7 +241,7 @@ const Booking = (props) => {
                     <button className={classes['back-button']}>
                         <FontAwesomeIcon icon={faChevronLeft} />
                     </button>
-                    <h1 className={classes['film-title']}>{title}</h1>
+                    <h1 className={classes['film-title']}>{filmTitle}</h1>
                 </div>
 
                 <div className={classes['date-choosing-area']}>
@@ -217,9 +249,7 @@ const Booking = (props) => {
                         <div
                             className={classNames(
                                 classes['available-date'],
-                                availableDate === selectedDate
-                                    ? classes['active']
-                                    : null
+                                availableDate === selectedDate ? classes['active'] : null
                             )}
                             onClick={() => {
                                 setSelectedDate(availableDate);
@@ -240,9 +270,7 @@ const Booking = (props) => {
                         <div
                             className={classNames(
                                 classes['available-time'],
-                                availableTime === selectedTime
-                                    ? classes['active']
-                                    : null
+                                availableTime === selectedTime ? classes['active'] : null
                             )}
                             onClick={() => {
                                 setSelectedTime(selectedTime);
@@ -256,28 +284,31 @@ const Booking = (props) => {
 
                 <div className={classes['seat-choosing-area']}>
                     <div className={classes['hall-layout']}>
-                        {layout.layoutRows.map((layoutRow) => (
-                            <div
-                                className={classes['hall-layout-row']}
-                                key={layoutRow.id}
-                            >
-                                {layoutRow.layoutItems.map((layoutItem) => (
+                        {layoutRows.map((layoutRow, rowIndex) => (
+                            <div className={classes['hall-layout-row']} key={rowIndex}>
+                                {layoutRow.map((layoutItem) => (
                                     <div
                                         className={classNames(
                                             classes['hall-layout-item'],
-                                            getHallItemTypeClass(
-                                                layoutItem.type
-                                            )
+                                            getHallItemTypeClasses(layoutItem, selectedSeats)
                                         )}
                                         style={
                                             {
-                                                '--hall-item-relative-width':
-                                                    widthRegistry[
-                                                        layoutItem.type
-                                                    ],
+                                                '--hall-item-relative-width': widthRegistry[layoutItem.seatType],
                                             } as React.CSSProperties
                                         }
-                                    ></div>
+                                        key={`${layoutItem.rowID}_${layoutItem.columnID}`}
+                                        onClick={
+                                            layoutItem.seatStatus !== SeatStatus.BOOKED
+                                                ? () => {
+                                                      onSeatClick(layoutItem);
+                                                  }
+                                                : null
+                                        }
+                                        role={layoutItem.seatStatus !== SeatStatus.BOOKED ? 'button' : null}
+                                    >
+                                        {getSeatTypeIcon(layoutItem.seatType)}
+                                    </div>
                                 ))}
                             </div>
                         ))}
@@ -286,53 +317,40 @@ const Booking = (props) => {
             </div>
 
             <div className={classes['generated-ticket']}>
-                <div
-                    className={classNames(
-                        classes['generated-ticket-card'],
-                        classes['sidebar-card']
-                    )}
-                >
+                <div className={classNames(classes['generated-ticket-card'], classes['sidebar-card'])}>
                     <h2 className={classes['sidebar-card-title']}>Квиток</h2>
-                    <GeneratedTicketDetail title="Фільм" description={title} />
+                    <GeneratedTicketDetail title="Фільм" description={filmTitle} />
                     <GeneratedTicketDetail
                         title="Час"
                         description={
                             capitalize(
-                                format(
-                                    selectedTime.startAt,
-                                    'cccccc, d MMMM HH:mm',
-                                    {
-                                        locale: uk,
-                                    }
-                                )
+                                format(selectedTime.startAt, 'cccccc, d MMMM HH:mm', {
+                                    locale: uk,
+                                })
                             ) ?? ''
                         }
                     />
-                    <GeneratedTicketDetail
-                        title="Зала"
-                        description={selectedTime.hallTitle}
-                    />
+                    <GeneratedTicketDetail title="Зала" description={selectedTime.hallTitle} />
 
                     <GeneratedTicketDetail
                         title="Місця"
                         // TODO Make dynamic
-                        description="Б8, Б9, Б10"
+                        description={selectedSeats
+                            .map((selectedSeat) => `${selectedSeat.rowID}/${selectedSeat.columnID}`)
+                            .join(', ')}
                     />
                 </div>
             </div>
 
             <div className={classes['checkout']}>
-                <div
-                    className={classNames(
-                        classes['checkout-card'],
-                        classes['sidebar-card']
-                    )}
-                >
+                <div className={classNames(classes['checkout-card'], classes['sidebar-card'])}>
                     <h2 className={classes['sidebar-card-title']}>До сплати</h2>
                     Всього: 150 грн
                     <div className={classes['checkout-buttons-container']}>
                         <Button>Купувати квиток</Button>
-                        <Button variant="alternative">Бронювати</Button>
+                        <Button onClick={() => onBookTicketClick()} variant="alternative">
+                            Бронювати
+                        </Button>
                     </div>
                 </div>
             </div>
