@@ -1,4 +1,4 @@
-﻿namespace Kinematik.HttpApi.Bookings.GetAllSessionsResponse
+﻿namespace Kinematik.HttpApi.Bookings.GetBookingStatuses
 {
     public class GetBookingStatusesResponse
     {

@@ -219,7 +219,7 @@ function itemTippy(element, data) {
 }
 
 export default Vue.extend({
-  name: 'MovieSessionsPage',
+  name: 'SessionsPage',
   data() {
     return {
       filmToAdd: null,

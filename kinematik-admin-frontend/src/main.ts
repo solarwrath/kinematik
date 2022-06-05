@@ -17,6 +17,10 @@ import router from '@//router';
 import App from '@/App.vue';
 import apiBaseUrl from '@/api-base-url';
 
+import dayjs from 'dayjs';
+
+dayjs.locale('uk');
+
 axios.defaults.baseURL = apiBaseUrl;
 
 Vue.use(BootstrapVue);

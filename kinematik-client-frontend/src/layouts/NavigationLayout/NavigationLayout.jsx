@@ -16,9 +16,10 @@ const NavigationLayout = (props) => {
                     <img src={netflixLogoUrl} />
                 </a>
                 <ul className={classes['navbar-right-list']}>
-                    <li>
+                    {/*<li>
                         <a href="/">Замовити снеки</a>
                     </li>
+                    */}
                     <li>
                         <a href="/">Контакти</a>
                     </li>

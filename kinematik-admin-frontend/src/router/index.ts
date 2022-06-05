@@ -9,7 +9,9 @@ import ListHallsPage from '@/pages/halls/ListHallsPage.vue';
 import CreateHallPage from '@/pages/halls/CreateHallPage.vue';
 import EditHallPage from '@/pages/halls/EditHallPage.vue';
 
-import MovieSessionsPage from '@/pages/movie-sessions/MovieSessionsPage.vue';
+import SessionsPage from '@/pages/sessions/SessionsPage.vue';
+
+import SessionsWithBookingStatsPage from '@/pages/bookings/SessionsWithBookingStatsPage.vue';
 
 Vue.use(VueRouter);
 
@@ -47,8 +49,12 @@ const routes: Array<RouteConfig> = [
     component: EditHallPage,
   },
   {
-    path: '/movie-sessions',
-    component: MovieSessionsPage,
+    path: '/sessions',
+    component: SessionsPage,
+  },
+  {
+    path: '/bookings',
+    component: SessionsWithBookingStatsPage,
   },
 ];
 

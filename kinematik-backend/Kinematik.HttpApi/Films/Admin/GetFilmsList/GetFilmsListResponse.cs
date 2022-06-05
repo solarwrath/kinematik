@@ -11,7 +11,7 @@
         public string Title { get; set; } = null!;
         public string? PosterUrl { get; set; }
         public string Description { get; set; } = null!;
+        public int? Runtime { get; set; }
         public IEnumerable<int>? GenreIDs { get; set; }
-        public int? Duration { get; set; }
     }
 }

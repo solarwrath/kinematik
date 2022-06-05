@@ -4,6 +4,7 @@ using Kinematik.EntityFramework;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Kinematik.EntityFramework.Migrations
 {
     [DbContext(typeof(KinematikDbContext))]
-    partial class KinematikDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220604181414_Added IsPayedFor field for Booking")]
+    partial class AddedIsPayedForfieldforBooking
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -248,7 +250,7 @@ namespace Kinematik.EntityFramework.Migrations
             modelBuilder.Entity("Kinematik.Domain.Entities.Booking", b =>
                 {
                     b.HasOne("Kinematik.Domain.Entities.Session", "Session")
-                        .WithMany("Bookings")
+                        .WithMany()
                         .HasForeignKey("SessionID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -334,11 +336,6 @@ namespace Kinematik.EntityFramework.Migrations
                     b.Navigation("LayoutItems");
 
                     b.Navigation("Sessions");
-                });
-
-            modelBuilder.Entity("Kinematik.Domain.Entities.Session", b =>
-                {
-                    b.Navigation("Bookings");
                 });
 #pragma warning restore 612, 618
         }

@@ -55,6 +55,7 @@ export default Vue.extend({
         {
           key: 'id',
           label: 'ID',
+          class: 'text-center',
         },
         {
           key: 'title',
@@ -116,7 +117,7 @@ export default Vue.extend({
 
 <style scoped lang="scss">
 .poster {
-  max-height: 200px;
+  max-height: 50px;
 }
 
 .action-button {

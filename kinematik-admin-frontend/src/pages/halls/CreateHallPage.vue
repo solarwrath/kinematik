@@ -9,6 +9,7 @@
         <b-button variant="success" v-on:click="addHall()">
           <i class="fa-solid fa-floppy-disk"></i> Зберегти
         </b-button>
+
         <b-button variant="outline-success" v-on:click="addHall()">
           <i class="fa-solid fa-check"></i> Зберегти та додати ще
         </b-button>

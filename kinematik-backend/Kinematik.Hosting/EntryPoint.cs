@@ -26,7 +26,7 @@ Assembly applicationAssembly = Assembly.Load("Kinematik.Application");
 
 var builder = WebApplication.CreateBuilder(args);
 
-ConfigureConfiguration(builder.Configuration);
+ConfigureConfiguration(builder.Services, builder.Configuration);
 ConfigureServices(builder.Services, builder.Configuration);
 
 var app = builder.Build();
@@ -36,9 +36,11 @@ ConfigureEndpoints(app, builder.Services);
 
 app.Run();
 
-void ConfigureConfiguration(ConfigurationManager configuration)
+void ConfigureConfiguration(IServiceCollection services, ConfigurationManager configuration)
 {
-
+    configuration.AddEnvironmentVariables();
+    
+    services.Configure<LiqPayConfiguration>(configuration.GetRequiredSection("LiqPay"));
 }
 
 void ConfigureServices(IServiceCollection services, ConfigurationManager configuration)

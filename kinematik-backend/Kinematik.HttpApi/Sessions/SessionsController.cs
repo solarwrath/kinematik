@@ -1,7 +1,9 @@
 ﻿using Kinematik.Application.Commands.Admin.Sessions;
+using Kinematik.Application.Queries.Admin.Sessions;
 using Kinematik.Application.Queries.Sessions;
 using Kinematik.HttpApi.Sessions.GetSessions;
 using Kinematik.HttpApi.Sessions.GetSessionsAvailableForBooking;
+using Kinematik.HttpApi.Sessions.GetSessionsWithBookingStatistics;
 using Kinematik.HttpApi.Sessions.UpdateAllSessions;
 
 using MediatR;
@@ -37,6 +39,33 @@ namespace Kinematik.HttpApi.Sessions
                 FilmID = session.FilmID,
                 HallID = session.HallID,
                 StartAt = session.StartAt,
+            });
+
+            return Ok(response);
+        }
+
+        [HttpGet]
+        [Route("with-booking-stats")]
+        [SwaggerOperation(
+            Summary = "Повертає всі сеанси з інформацією про їх бронювання"
+        )]
+        public async Task<ActionResult<GetSessionsWithBookingStatisticsResponse>> GetSessionsWithBookingStatistics(CancellationToken cancellationToken = default)
+        {
+            GetSessionsWithBookingStatisticsResponse response = new GetSessionsWithBookingStatisticsResponse();
+
+            GetSessionsWithBookingStatisticsQueryOutput queryOutput = await _mediator.Send(new GetSessionsWithBookingStatisticsQueryInput(), cancellationToken);
+
+            response.Sessions = queryOutput.Sessions.Select(session => new GetSessionsWithBookingStatisticsResponseSession
+            {
+                ID = session.ID,
+                FilmID = session.FilmID,
+                FilmTitle = session.FilmTitle,
+                PosterUrl = session.PosterUrl,
+                HallID = session.HallID,
+                HallTitle = session.HallTitle,
+                HallCapacity = session.HallCapacity,
+                BookedSeatsQuantity = session.BookedSeatsQuantity,
+                StartAt = session.StartAt
             });
 
             return Ok(response);

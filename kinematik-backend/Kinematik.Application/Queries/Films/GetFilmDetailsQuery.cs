@@ -69,6 +69,8 @@ namespace Kinematik.Application.Queries.Films
             output.GenreIDs = film.GenreIDs;
             output.LanguageID = film.LanguageID;
 
+            // TODO Uncomment me
+            /*
             if (!string.IsNullOrWhiteSpace(film.ImdbID))
             {
                 string imdbApiKey = Environment.GetEnvironmentVariable("IMDB_API_KEY");
@@ -86,6 +88,7 @@ namespace Kinematik.Application.Queries.Films
                     }
                 }
             }
+            */
 
             return output;
         }

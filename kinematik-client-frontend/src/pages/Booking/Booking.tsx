@@ -1,26 +1,28 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import classes from './Booking.module.css';
 
 import { useParams } from 'react-router-dom';
+
+import { capitalize, groupBy, sumBy } from 'lodash';
 
 import axios from 'axios';
 
 import { format } from 'date-fns';
 import { uk } from 'date-fns/locale';
 
-import { capitalize, groupBy } from 'lodash';
 import classNames from 'classnames';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 
 import Button from '../../components/Button/Button';
-import { SeatType, widthRegistry } from '../../domain/hallLayout';
+import { SeatType, widthRegistry, priceRegistry } from '../../domain/hallLayout';
 
 import GeneratedTicketDetail from './GeneratedTicketDetail';
 import { ReactComponent as SeatIcon } from '../../assets/seat.svg';
 import { ReactComponent as CouchIcon } from '../../assets/couch.svg';
-import { SeatStatus } from './Booking.';
+import { SeatStatus } from '../../domain/booking';
+import { TextField } from '@mui/material';
 
 async function getFilmTitle(filmID: number) {
     const response = await axios.get(`${window.apiBaseUrl}/films/${filmID}/details`);
@@ -143,7 +145,7 @@ function getSeatTypeIcon(seatType: SeatType) {
     }
 }
 
-async function bookTicket(sesssionID: number, selectedSeatsIDs: any[]) {
+async function bookTicket(sesssionID: number, selectedSeatsIDs: any[], clientEmail: string, clientPhone: string) {
     const request = {
         seatsCoordinates: selectedSeatsIDs.map((selectedSeat) => {
             return {
@@ -152,10 +154,16 @@ async function bookTicket(sesssionID: number, selectedSeatsIDs: any[]) {
             };
         }),
         sessionID: sesssionID,
-        clientEmail: 'anton.zhluktarov@gmail.com',
-        clientPhone: '+12302032030',
+        clientEmail: clientEmail,
+        clientPhone: clientPhone,
     };
     const response = await axios.put(`${window.apiBaseUrl}/bookings`, request);
+
+    return response.data;
+}
+
+function computeTicketPrice(selectedSeats: any[]) {
+    return sumBy(selectedSeats, (selectedSeat) => priceRegistry[selectedSeat.seatType]);
 }
 
 const Booking = (props) => {
@@ -169,6 +177,13 @@ const Booking = (props) => {
 
     const [layoutRows, setLayoutRows] = useState([]);
     const [selectedSeats, setSelectedSeats] = useState([]);
+
+    const [clientEmail, setClientEmail] = useState('');
+    const [clientPhone, setClientPhone] = useState('');
+
+    const checkoutForm = useRef(null);
+    const [checkoutData, setCheckoutData] = useState('');
+    const [checkoutSignature, setCheckoutSignature] = useState('');
 
     function onSeatClick(seat) {
         let newSelectedItems = null;
@@ -184,7 +199,19 @@ const Booking = (props) => {
         setSelectedSeats(newSelectedItems);
     }
 
-    async function onBookTicketClick() {
+    function changeClientEmail(event) {
+        event.preventDefault();
+        setClientEmail(event.target.value);
+    }
+
+    function changeClientPhone(event) {
+        event.preventDefault();
+        setClientPhone(event.target.value);
+    }
+
+    async function onBookTicketClick(event) {
+        event.preventDefault();
+
         const selectedSeatsIDs = selectedSeats.map((selectedSeat) => {
             return {
                 rowID: selectedSeat.rowID,
@@ -192,7 +219,12 @@ const Booking = (props) => {
             };
         });
 
-        await bookTicket(selectedTime.sessionID, selectedSeatsIDs);
+        const bookTicketResponse = await bookTicket(selectedTime.sessionID, selectedSeatsIDs, clientEmail, clientPhone);
+
+        setCheckoutData(bookTicketResponse.checkoutRequestData);
+        setCheckoutSignature(bookTicketResponse.checkoutRequestSignature);
+
+        checkoutForm.current.submit();
     }
 
     useEffect(async () => {
@@ -235,126 +267,148 @@ const Booking = (props) => {
     }
 
     return (
-        <div className={classes['booking-layout']}>
-            <div className={classes['choosing-area']}>
-                <div className={classes['top-row']}>
-                    <button className={classes['back-button']}>
-                        <FontAwesomeIcon icon={faChevronLeft} />
-                    </button>
-                    <h1 className={classes['film-title']}>{filmTitle}</h1>
-                </div>
+        <React.Fragment>
+            <div className={classes['booking-layout']}>
+                <div className={classes['choosing-area']}>
+                    <div className={classes['top-row']}>
+                        <button className={classes['back-button']}>
+                            <FontAwesomeIcon icon={faChevronLeft} />
+                        </button>
+                        <h1 className={classes['film-title']}>{filmTitle}</h1>
+                    </div>
 
-                <div className={classes['date-choosing-area']}>
-                    {availableDates.map((availableDate) => (
-                        <div
-                            className={classNames(
-                                classes['available-date'],
-                                availableDate === selectedDate ? classes['active'] : null
-                            )}
-                            onClick={() => {
-                                setSelectedDate(availableDate);
-                            }}
-                            key={availableDate.date.getTime()}
-                        >
-                            {capitalize(
-                                format(availableDate.date, 'cccccc, d MMMM', {
-                                    locale: uk,
-                                })
-                            )}
-                        </div>
-                    ))}
-                </div>
-
-                <div className={classes['time-choosing-area']}>
-                    {selectedDate.availableTimes.map((availableTime) => (
-                        <div
-                            className={classNames(
-                                classes['available-time'],
-                                availableTime === selectedTime ? classes['active'] : null
-                            )}
-                            onClick={() => {
-                                setSelectedTime(selectedTime);
-                            }}
-                            key={availableTime.startAt.getTime()}
-                        >
-                            {capitalize(format(availableTime.startAt, 'HH:mm'))}
-                        </div>
-                    ))}
-                </div>
-
-                <div className={classes['seat-choosing-area']}>
-                    <div className={classes['hall-layout']}>
-                        {layoutRows.map((layoutRow, rowIndex) => (
-                            <div className={classes['hall-layout-row']} key={rowIndex}>
-                                {layoutRow.map((layoutItem) => (
-                                    <div
-                                        className={classNames(
-                                            classes['hall-layout-item'],
-                                            getHallItemTypeClasses(layoutItem, selectedSeats)
-                                        )}
-                                        style={
-                                            {
-                                                '--hall-item-relative-width': widthRegistry[layoutItem.seatType],
-                                            } as React.CSSProperties
-                                        }
-                                        key={`${layoutItem.rowID}_${layoutItem.columnID}`}
-                                        onClick={
-                                            layoutItem.seatStatus !== SeatStatus.BOOKED
-                                                ? () => {
-                                                      onSeatClick(layoutItem);
-                                                  }
-                                                : null
-                                        }
-                                        role={layoutItem.seatStatus !== SeatStatus.BOOKED ? 'button' : null}
-                                    >
-                                        {getSeatTypeIcon(layoutItem.seatType)}
-                                    </div>
-                                ))}
+                    <div className={classes['date-choosing-area']}>
+                        {availableDates.map((availableDate) => (
+                            <div
+                                className={classNames(
+                                    classes['available-date'],
+                                    availableDate === selectedDate ? classes['active'] : null
+                                )}
+                                onClick={() => {
+                                    setSelectedDate(availableDate);
+                                }}
+                                key={availableDate.date.getTime()}
+                            >
+                                {capitalize(
+                                    format(availableDate.date, 'cccccc, d MMMM', {
+                                        locale: uk,
+                                    })
+                                )}
                             </div>
                         ))}
                     </div>
+
+                    <div className={classes['time-choosing-area']}>
+                        {selectedDate.availableTimes.map((availableTime) => (
+                            <div
+                                className={classNames(
+                                    classes['available-time'],
+                                    availableTime === selectedTime ? classes['active'] : null
+                                )}
+                                onClick={() => {
+                                    setSelectedTime(selectedTime);
+                                }}
+                                key={availableTime.startAt.getTime()}
+                            >
+                                {capitalize(format(availableTime.startAt, 'HH:mm'))}
+                            </div>
+                        ))}
+                    </div>
+
+                    <div className={classes['seat-choosing-area']}>
+                        <div className={classes['hall-layout']}>
+                            {layoutRows.map((layoutRow, rowIndex) => (
+                                <div className={classes['hall-layout-row']} key={rowIndex}>
+                                    {layoutRow.map((layoutItem) => (
+                                        <div
+                                            className={classNames(
+                                                classes['hall-layout-item'],
+                                                getHallItemTypeClasses(layoutItem, selectedSeats)
+                                            )}
+                                            style={
+                                                {
+                                                    '--hall-item-relative-width': widthRegistry[layoutItem.seatType],
+                                                } as React.CSSProperties
+                                            }
+                                            key={`${layoutItem.rowID}_${layoutItem.columnID}`}
+                                            onClick={
+                                                layoutItem.seatStatus !== SeatStatus.BOOKED
+                                                    ? () => {
+                                                          onSeatClick(layoutItem);
+                                                      }
+                                                    : null
+                                            }
+                                            role={layoutItem.seatStatus !== SeatStatus.BOOKED ? 'button' : null}
+                                        >
+                                            {getSeatTypeIcon(layoutItem.seatType)}
+                                        </div>
+                                    ))}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
                 </div>
-            </div>
 
-            <div className={classes['generated-ticket']}>
-                <div className={classNames(classes['generated-ticket-card'], classes['sidebar-card'])}>
-                    <h2 className={classes['sidebar-card-title']}>Квиток</h2>
-                    <GeneratedTicketDetail title="Фільм" description={filmTitle} />
-                    <GeneratedTicketDetail
-                        title="Час"
-                        description={
-                            capitalize(
-                                format(selectedTime.startAt, 'cccccc, d MMMM HH:mm', {
-                                    locale: uk,
-                                })
-                            ) ?? ''
-                        }
-                    />
-                    <GeneratedTicketDetail title="Зала" description={selectedTime.hallTitle} />
+                <div className={classes['generated-ticket']}>
+                    <div className={classNames(classes['generated-ticket-card'], classes['sidebar-card'])}>
+                        <h2 className={classes['sidebar-card-title']}>Квиток</h2>
+                        <GeneratedTicketDetail title="Фільм" description={filmTitle} />
+                        <GeneratedTicketDetail
+                            title="Час"
+                            description={
+                                capitalize(
+                                    format(selectedTime.startAt, 'cccccc, d MMMM HH:mm', {
+                                        locale: uk,
+                                    })
+                                ) ?? ''
+                            }
+                        />
+                        <GeneratedTicketDetail title="Зала" description={selectedTime.hallTitle} />
 
-                    <GeneratedTicketDetail
-                        title="Місця"
-                        // TODO Make dynamic
-                        description={selectedSeats
-                            .map((selectedSeat) => `${selectedSeat.rowID}/${selectedSeat.columnID}`)
-                            .join(', ')}
-                    />
+                        <GeneratedTicketDetail
+                            title="Місця"
+                            description={selectedSeats
+                                .map((selectedSeat) => `${selectedSeat.rowID}/${selectedSeat.columnID}`)
+                                .join(', ')}
+                        />
+                    </div>
                 </div>
-            </div>
 
-            <div className={classes['checkout']}>
-                <div className={classNames(classes['checkout-card'], classes['sidebar-card'])}>
-                    <h2 className={classes['sidebar-card-title']}>До сплати</h2>
-                    Всього: 150 грн
-                    <div className={classes['checkout-buttons-container']}>
-                        <Button>Купувати квиток</Button>
-                        <Button onClick={() => onBookTicketClick()} variant="alternative">
-                            Бронювати
-                        </Button>
+                <div className={classes['checkout']}>
+                    <div className={classNames(classes['checkout-card'], classes['sidebar-card'])}>
+                        <h2 className={classes['sidebar-card-title']}>До сплати</h2>
+                        Всього: {computeTicketPrice(selectedSeats)} грн.
+                        <form>
+                            <div className={classes['checkout-form-contacts']}>
+                                <TextField
+                                    value={clientEmail}
+                                    onChange={changeClientEmail}
+                                    label="Email адреса"
+                                    variant="outlined"
+                                />
+                                <TextField
+                                    value={clientPhone}
+                                    onChange={changeClientPhone}
+                                    label="Номер телефону"
+                                    variant="outlined"
+                                />
+                            </div>
+                            <div className={classes['checkout-buttons-container']}>
+                                <Button>Купувати квиток</Button>
+                                <Button onClick={onBookTicketClick} variant="alternative">
+                                    Бронювати
+                                </Button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
-        </div>
+
+            <form method="POST" action="https://www.liqpay.ua/api/3/checkout" acceptCharset="utf-8" ref={checkoutForm}>
+                <input type="hidden" name="data" value={checkoutData} />
+                <input type="hidden" name="signature" value={checkoutSignature} />
+            </form>
+        </React.Fragment>
     );
 };
 

@@ -37,6 +37,7 @@ export default Vue.extend({
         {
           key: 'id',
           label: 'ID',
+          class: 'text-center',
         },
         {
           key: 'title',

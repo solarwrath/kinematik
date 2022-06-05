@@ -196,15 +196,15 @@ export default Vue.extend({
     },
     getSeatTypeClass(seatType: SeatType) {
       switch (seatType) {
+        case SeatType.EMPTY:
+        default:
+          return 'hall-item-empty';
         case SeatType.COMMON:
           return 'hall-item-common';
         case SeatType.VIP:
           return 'hall-item-vip';
         case SeatType.COUCH:
           return 'hall-item-couch';
-        case SeatType.EMPTY:
-        default:
-          return 'hall-item-empty';
       }
     },
   },

@@ -1,7 +1,10 @@
 ﻿using Kinematik.Application.Commands.Bookings;
+using Kinematik.Application.Queries.Admin.Bookings;
 using Kinematik.Application.Queries.Bookings;
 using Kinematik.HttpApi.Bookings.CreateBooking;
-using Kinematik.HttpApi.Bookings.GetAllSessionsResponse;
+using Kinematik.HttpApi.Bookings.GetBookingStatuses;
+using Kinematik.HttpApi.Bookings.GetDetailedBookingStatuses;
+using Kinematik.HttpApi.Bookings.ProcessPaymentPong;
 
 using MediatR;
 
@@ -51,15 +54,51 @@ namespace Kinematik.HttpApi.Sessions
             return Ok(response);
         }
 
+        [HttpGet]
+        [Route("{sessionID:int}/detailed")]
+        [SwaggerOperation(
+            Summary = "Повертає стан бронювань на зазначений сеанс"
+        )]
+        public async Task<ActionResult<GetDetailedBookingStatusesResponse>> GetDetailedBookingStatuses(
+            [FromRoute] int sessionID,
+            CancellationToken cancellationToken = default
+        )
+        {
+            GetDetailedBookingStatusesResponse response = new GetDetailedBookingStatusesResponse();
+
+            GetDetailedBookingStatusesQueryOutput queryOutput = await _mediator.Send(
+                new GetDetailedBookingStatusesQueryInput
+                {
+                    SessionID = sessionID
+                },
+                cancellationToken
+            );
+
+            response.DetailedBookingStatuses = queryOutput.DetailedBookingStatuses.Select(bookingStatus => new GetDetailedBookingStatusesResponseBookingStatus
+            {
+                RowID = bookingStatus.RowID,
+                ColumnID = bookingStatus.ColumnID,
+                SeatTypeID = (int)bookingStatus.SeatType,
+                SeatAvailabilityStatusID = (int)bookingStatus.SeatAvailabilityStatus,
+                BookingOrderID = bookingStatus.BookingOrderID,
+                BookedClientEmail = bookingStatus.BookedClientEmail,
+                BookedClientPhone = bookingStatus.BookedClientPhone
+            });
+
+            return Ok(response);
+        }
+
         [HttpPut]
         [SwaggerOperation(
             Summary = "Бронює місця"
         )]
-        public async Task<ActionResult> CreateBooking(
+        public async Task<ActionResult<CreateBookingResponse>> CreateBooking(
             [FromBody] CreateBookingRequest incomingRequest,
             CancellationToken cancellationToken = default
         )
         {
+            CreateBookingResponse response = new CreateBookingResponse();
+
             CreateBookingCommandInput commandInput = new CreateBookingCommandInput
             {
                 SessionID = incomingRequest.SessionID,
@@ -72,8 +111,32 @@ namespace Kinematik.HttpApi.Sessions
                 ClientPhone = incomingRequest.ClientPhone
             };
 
-            await _mediator.Send(commandInput, cancellationToken);
+            CreateBookingCommandOutput commandOutput = await _mediator.Send(commandInput, cancellationToken);
 
+            response.CheckoutRequestData = commandOutput.CheckoutRequestData;
+            response.CheckoutRequestSignature = commandOutput.CheckoutRequestSignature;
+
+            return Ok(response);
+        }
+
+        [HttpPost]
+        [Route("liqpay-callback")]
+        [SwaggerOperation(
+            Summary = "LiqPay-коллбек"
+        )]
+        public async Task<ActionResult> ProcessLiqPayCallback(
+            [FromForm] ProcessPaymentPongRequest request,
+            CancellationToken cancellationToken = default
+        )
+        {
+            ProcessLiqPayCallbackCommandInput commandInput = new ProcessLiqPayCallbackCommandInput
+            {
+                Data = request.Data,
+                Signature = request.Signature
+            };
+
+            await _mediator.Send(commandInput, cancellationToken);
+            
             return Ok();
         }
     }

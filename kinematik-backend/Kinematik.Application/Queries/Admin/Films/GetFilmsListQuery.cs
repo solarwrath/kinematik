@@ -36,6 +36,7 @@ namespace Kinematik.Application.Queries.Admin.Films
                     film.Title,
                     film.PosterPath,
                     film.Description,
+                    film.Runtime,
                     GenreIDs = film.GenrePairs.Select(genrePair => genrePair.GenreID)
                 })
                 .ToArrayAsync(cancellationToken);
@@ -53,6 +54,7 @@ namespace Kinematik.Application.Queries.Admin.Films
                         Title = film.Title,
                         PosterUrl = posterUrl,
                         Description = film.Description,
+                        Runtime = film.Runtime,
                         GenreIDs = film.GenreIDs
                     };
                 });
@@ -71,6 +73,7 @@ namespace Kinematik.Application.Queries.Admin.Films
             public string Title { get; set; } = null!;
             public string? PosterUrl { get; set; }
             public string Description { get; set; } = null!;
+            public int? Runtime { get; set; }
             public IEnumerable<int>? GenreIDs { get; set; }
         }
     }

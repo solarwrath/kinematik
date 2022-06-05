@@ -3,7 +3,8 @@
     <nav class="sidebar py-2 px-3">
       <router-link to="/films" active-class="active-menu-item">Фільми</router-link>
       <router-link to="/halls" active-class="active-menu-item">Зали</router-link>
-      <router-link to="/movie-sessions" active-class="active-menu-item">Сеанси</router-link>
+      <router-link to="/sessions" active-class="active-menu-item">Сеанси</router-link>
+      <router-link to="/bookings" active-class="active-menu-item">Бронювання</router-link>
     </nav>
 
     <div class="content container">

@@ -45,6 +45,7 @@ namespace Kinematik.HttpApi.Films
                     Title = originalFilm.Title,
                     PosterUrl = originalFilm.PosterUrl,
                     Description = originalFilm.Description,
+                    Runtime = originalFilm.Runtime,
                     GenreIDs = originalFilm.GenreIDs
                 })
             };

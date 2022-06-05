@@ -9,5 +9,7 @@
 
         public Film Film { get; set; }
         public Hall? Hall { get; set; }
+
+        public virtual ICollection<Booking> Bookings { get; set; } = null!;
     }
 }
