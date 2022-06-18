@@ -1,25 +1,41 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<PreserveCompilationContext>true</PreserveCompilationContext>
+	</PropertyGroup>
 
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
 
-  <ItemGroup>
-    <PackageReference Include="MediatR" Version="10.0.1" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-  </ItemGroup>
+		<MvcRazorExcludeRefAssembliesFromPublish>false</MvcRazorExcludeRefAssembliesFromPublish>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Kinematik.Domain\Kinematik.Domain.csproj" />
-    <ProjectReference Include="..\Kinematik.EntityFramework\Kinematik.EntityFramework.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+	  <None Remove="EmailTemplates\BookedTicketConfirmation\BookedTicketConfirmation.cshtml" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="Microsoft.Extensions.Http">
-      <HintPath>C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\6.0.4\Microsoft.Extensions.Http.dll</HintPath>
-    </Reference>
-  </ItemGroup>
+	<ItemGroup>
+	  <EmbeddedResource Include="EmailTemplates\BookedTicketConfirmation\BookedTicketConfirmation.cshtml" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="FluentEmail.Core" Version="3.0.2" />
+		<PackageReference Include="FluentEmail.Razor" Version="3.0.2" />
+		<PackageReference Include="MediatR" Version="10.0.1" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+		<PackageReference Include="QRCoder" Version="1.4.3" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Kinematik.Domain\Kinematik.Domain.csproj" />
+		<ProjectReference Include="..\Kinematik.EntityFramework\Kinematik.EntityFramework.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Reference Include="Microsoft.Extensions.Http">
+			<HintPath>C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\6.0.4\Microsoft.Extensions.Http.dll</HintPath>
+		</Reference>
+	</ItemGroup>
 
 </Project>

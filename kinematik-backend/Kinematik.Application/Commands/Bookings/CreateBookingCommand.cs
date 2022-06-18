@@ -105,7 +105,7 @@ namespace Kinematik.Application.Commands.Bookings
                 order_id = newBooking.ID.ToString(),
                 language = "ua",
                 // TODO Deal with this
-                server_url = "https://71d0-81-24-208-241.eu.ngrok.io/api/bookings/liqpay-callback"
+                server_url = "https://9f23-81-24-208-241.eu.ngrok.io/api/bookings/liqpay-callback"
             };
 
             string checkoutRequestJson = JsonConvert.SerializeObject(checkoutCheckoutRequest);

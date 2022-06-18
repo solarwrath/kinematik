@@ -1,5 +1,4 @@
 using System.Reflection;
-using System.Text.Json.Serialization;
 
 using Kinematik.Application.Ports;
 using Kinematik.EntityFramework;
@@ -9,7 +8,6 @@ using kinematik_backend.Swagger;
 
 using MediatR;
 
-using Microsoft.AspNetCore.Http.Json;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -19,7 +17,6 @@ using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 
 using Swashbuckle.AspNetCore.SwaggerGen;
-using JsonConverter = System.Text.Json.Serialization.JsonConverter;
 
 Assembly httpApiAssembly = Assembly.Load("Kinematik.HttpApi");
 Assembly applicationAssembly = Assembly.Load("Kinematik.Application");
@@ -106,6 +103,17 @@ void ConfigureServices(IServiceCollection services, ConfigurationManager configu
         });
         configuration.SchemaFilter<EnumSchemaFilter>();
     });
+
+    services
+        .AddFluentEmail(
+            Environment.GetEnvironmentVariable("KINEMATIK_EMAIL_FROM_ADDRESS")!,
+            Environment.GetEnvironmentVariable("KINEMATIK_EMAIL_FROM_NAME")
+        )
+        .AddRazorRenderer()
+        .AddMailGunSender(
+            Environment.GetEnvironmentVariable("KINEMATIK_MAILGUN_DOMAIN")!,
+            Environment.GetEnvironmentVariable("KINEMATIK_MAILGUN_API_KEY")!
+        );
 
     services.AddMediatR(applicationAssembly);
 

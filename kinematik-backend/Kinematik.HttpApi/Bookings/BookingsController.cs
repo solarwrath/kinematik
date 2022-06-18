@@ -1,6 +1,7 @@
 ﻿using Kinematik.Application.Commands.Bookings;
 using Kinematik.Application.Queries.Admin.Bookings;
 using Kinematik.Application.Queries.Bookings;
+using Kinematik.HttpApi.Bookings.CheckBookingTicket;
 using Kinematik.HttpApi.Bookings.CreateBooking;
 using Kinematik.HttpApi.Bookings.GetBookingStatuses;
 using Kinematik.HttpApi.Bookings.GetDetailedBookingStatuses;
@@ -22,7 +23,7 @@ namespace Kinematik.HttpApi.Sessions
         {
             _mediator = mediator;
         }
-
+        
         [HttpGet]
         [Route("{sessionID:int}")]
         [SwaggerOperation(
@@ -116,6 +117,33 @@ namespace Kinematik.HttpApi.Sessions
             response.CheckoutRequestData = commandOutput.CheckoutRequestData;
             response.CheckoutRequestSignature = commandOutput.CheckoutRequestSignature;
 
+            return Ok(response);
+        }
+
+        [HttpGet]
+        [Route("check/{bookingID:int}/{hallID:int}")]
+        [SwaggerOperation(
+            Summary = "Перевіряє квиток на валідність та відповідність залі"
+        )]
+        public async Task<ActionResult<CheckBookingTicketResponse>> CheckBookingTicket(
+            [FromRoute] int bookingID,
+            [FromRoute] int hallID,
+            CancellationToken cancellationToken = default
+        )
+        {
+            CheckBookingTicketResponse response = new CheckBookingTicketResponse();
+
+            CheckBookingTicketQueryOutput queryOutput = await _mediator.Send(
+                new CheckBookingTicketQueryInput
+                {
+                    BookingID = bookingID,
+                    HallID = hallID
+                },
+                cancellationToken
+            );
+
+            response.ErrorCode = (int?)queryOutput.Error;
+            
             return Ok(response);
         }
 

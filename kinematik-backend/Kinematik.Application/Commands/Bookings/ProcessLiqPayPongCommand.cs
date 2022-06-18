@@ -1,6 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 
+using Kinematik.Application.Notifications.TicketBooked;
 using Kinematik.Application.Ports;
 using Kinematik.Application.ThirdParty.LiqPayAPI;
 using Kinematik.Domain.Entities;
@@ -24,14 +25,17 @@ namespace Kinematik.Application.Commands.Bookings
     {
         private readonly KinematikDbContext _dbContext;
         private readonly LiqPayConfiguration _liqPayConfiguration;
+        private readonly IMediator _mediator;
 
         public ProcessLiqPayCallbackCommandHandler(
             KinematikDbContext dbContext,
-            IOptions<LiqPayConfiguration> liqPayConfiguration
+            IOptions<LiqPayConfiguration> liqPayConfiguration,
+            IMediator mediator
         )
         {
             _dbContext = dbContext;
             _liqPayConfiguration = liqPayConfiguration.Value;
+            _mediator = mediator;
         }
 
         public async Task<Unit> Handle(ProcessLiqPayCallbackCommandInput input, CancellationToken cancellationToken)
@@ -64,6 +68,14 @@ namespace Kinematik.Application.Commands.Bookings
                 Booking? correspondingBooking = await _dbContext.Bookings.FindAsync(new object[] { bookingID }, cancellationToken);
                 correspondingBooking.IsPayedFor = true;
                 await _dbContext.SaveChangesAsync(cancellationToken);
+
+                _mediator.Publish(
+                    new TicketBookedNotification
+                    {
+                        BookingID = bookingID
+                    },
+                    cancellationToken
+                );
             }
 
             return Unit.Value;
